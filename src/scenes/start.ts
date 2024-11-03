@@ -1,6 +1,6 @@
 import { Scenes } from "telegraf";
 import enabled from "../utils/enabled";
-import { keyboards } from "../utils/keyboards";
+import { mainKeyboard } from "../utils/keyboards";
 const scene = new Scenes.BaseScene("start");
 
 export let keyboard = [["Start"]];
@@ -16,8 +16,11 @@ scene.enter(async (ctx: any) => {
   if (enable === "one" || enable === "four") {
     ctx.telegram.sendMessage(
       user_id,
-      `Assalomu alaykum!\nYangi Taqdimot tugmasini bosib taqdimot yaratishni boshlashingiz mumkin!`,
-      keyboards(keyboard)
+      "Assalomu alaykum! Test botga xush kelibsiz! 🎉\n\n" +
+      "Sizga kerakli testlarni tez va oson tayyorlashda yordam beraman. " +
+      'Boshlash uchun "Test yaratish" tugmasini bosing!\n\n' +
+      "Biz bilan dars tayyorlash endi judayam tez va oson!",
+      mainKeyboard
     );
 
     console.log("start scene");
@@ -25,7 +28,7 @@ scene.enter(async (ctx: any) => {
   } else if (enable === "two") {
     const text = "Assalomu alaykum Admin xush kelibsiz";
 
-    ctx.telegram.sendMessage(user_id, text, keyboards(admin_keyboard));
+    ctx.telegram.sendMessage(user_id, text, mainKeyboard);
     return await ctx.scene.enter("admin");
   } else if (enable === "three") {
     ctx.telegram.sendMessage(
@@ -37,3 +40,4 @@ scene.enter(async (ctx: any) => {
 });
 
 export default scene;
+ 
