@@ -26,10 +26,85 @@ model User {
   role      RoleEnum @default(USER)
   telegram_id String @unique
   isActive  Boolean @default(true)
-working      Boolean @default(false)
+  working      Boolean @default(false)
+  created_at DateTime @default(now())
+  fileText  fileText[]
+  chat      Chat[]
+  updated_at DateTime @updatedAt
+}
+
+model Chat {
+  id       String  @id @default(uuid())
+  name     String?
+  user     User @relation(fields: [user_id], references: [id])
+  pageCount Int @default(5)
+  plans     Plan[]
+  user_id  String
+  description Description[]
+  language String?
+  lang     String?
+  checkUser String?
+  model_id String?
+  type     String?
+  scool    String?
+  author  String?
+  model   gptModel? @relation(fields: [model_id], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
+
+model Plan {
+  id     String  @id @default(uuid())
+  name   String
+  chat_id String
+  chat    Chat @relation(fields: [chat_id], references: [id])
+  description Description[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Description {
+  id       String  @id @default(uuid())
+  name     String?
+  content  Json[]
+  plan_id  String
+  plan       Plan @relation(fields: [plan_id], references: [id])
+  chat     Chat @relation(fields: [chat_id], references: [id])
+  chat_id  String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+
+
+
+model fileText {
+  id      String  @id @default(uuid())
+  name    String?
+  content String
+  user_id String
+  number  Int?
+  contentJson Json[]
+  user    User @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model invitedUsers {
+  id       String  @id @default(uuid())
+  user_id  String? @unique
+  invited_user_id String
+  isActive Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+model gptModel {
+  id      String  @id @default(uuid())
+  name    String
+  chats   Chat[]
+
+}
+
 
 model postgress_sessions {
   id      String  @id

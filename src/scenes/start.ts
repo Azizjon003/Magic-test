@@ -17,13 +17,12 @@ scene.enter(async (ctx: any) => {
     ctx.telegram.sendMessage(
       user_id,
       "Assalomu alaykum! Test botga xush kelibsiz! 🎉\n\n" +
-      "Sizga kerakli testlarni tez va oson tayyorlashda yordam beraman. " +
-      'Boshlash uchun "Test yaratish" tugmasini bosing!\n\n' +
-      "Biz bilan dars tayyorlash endi judayam tez va oson!",
+        "Sizga kerakli testlarni tez va oson tayyorlashda yordam beraman. " +
+        'Boshlash uchun "Test yaratish" tugmasini bosing!\n\n' +
+        "Biz bilan dars tayyorlash endi judayam tez va oson!",
       mainKeyboard
     );
 
-    console.log("start scene");
     return await ctx.scene.enter("control");
   } else if (enable === "two") {
     const text = "Assalomu alaykum Admin xush kelibsiz";
@@ -40,4 +39,3 @@ scene.enter(async (ctx: any) => {
 });
 
 export default scene;
- 

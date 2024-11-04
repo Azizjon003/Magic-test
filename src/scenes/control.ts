@@ -4,12 +4,8 @@ const scene = new Scenes.BaseScene("control");
 scene.hears("/start", async (ctx: any) => {
   return await ctx.scene.enter("start");
 });
-
-scene.hears("Start", async (ctx) => {
-  ctx.reply("Start");
+scene.hears("📝 Test yaratish", async (ctx: any) => {
+  await ctx.scene.enter("testCreation");
 });
 
-scene.hears("Admin", async (ctx) => {
-  ctx.reply("Admin");
-});
 export default scene;

@@ -4,12 +4,15 @@ import { SceneContext } from "telegraf/typings/scenes";
 import bot from "./core/bot";
 import session from "./core/session";
 import stage from "./scenes/index";
-import botStart from "./utils/startBot";
 import { mainKeyboard } from "./utils/keyboards";
+import botStart from "./utils/startBot";
 
 bot.use(session);
 
-const middleware: Middleware<Context | SceneContext> = (ctx: any, next: any) => {
+const middleware: Middleware<Context | SceneContext> = (
+  ctx: any,
+  next: any
+) => {
   ctx?.session ?? (ctx.session = {});
 };
 
@@ -20,16 +23,13 @@ bot.use((ctx: any, next: any) => {
   return next();
 });
 
+// bot.use(subcribeFunk);
 bot.start(async (ctx: any) => {
   return await ctx.scene.enter("start");
 });
 
 bot.hears("Bosh menyu", async (ctx: any) => {
   await ctx.reply("Asosiy menyuga qaytdingiz.", mainKeyboard);
-});
-
-bot.hears("📝 Test yaratish", async (ctx: any) => {
-  await ctx.scene.enter("testCreation");
 });
 
 bot.hears(
