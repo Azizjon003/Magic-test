@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.16.1",
+    "docx": "^9.0.2",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.4",
     "openai": "^4.70.2",

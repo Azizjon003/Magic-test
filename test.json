@@ -1,0 +1,104 @@
+{
+  "tests": [
+    {
+      "question": "Amir Temurning tug'ilgan yili va joyi haqida ma'lumot bering. U qanday sharoitda tug'ilgan va bu uning kelajakdagi faoliyatiga qanday ta'sir ko'rsatdi?",
+      "answers": [
+        "1336-yil, Shahrisabzda tug'ilgan.",
+        "1337-yil, Samarqandda tug'ilgan.",
+        "1340-yil, Buxoroda tug'ilgan.",
+        "1335-yil, Toshkentda tug'ilgan."
+      ],
+      "correct_answer_index": "0"
+    },
+    {
+      "question": "Amir Temur o'z davrida qanday harbiy strategiyalarni qo'llagan? Uning jangovar taktikalarining asosiy xususiyatlari nimalardan iborat edi?",
+      "answers": [
+        "Ochiq janglarda kuchli qo'shinlar to'plab jang qilgan.",
+        "Taktik harakatlar va qoplamalar orqali raqiblarni aldagan.",
+        "Tinchlik shartnomalari tuzib, keyin jang qilgan.",
+        "Har doim jangda to'g'ridan-to'g'ri hujum qilgan."
+      ],
+      "correct_answer_index": "1"
+    },
+    {
+      "question": "Amir Temurning hukmronligi davomida iqtisodiy rivojlanish qanday bo'lgan? U qaysi sohalarga e'tibor berdi va bu iqtisodiyotga qanday ta'sir ko'rsatdi?",
+      "answers": [
+        "Savdo va qishloq xo'jaligiga e'tibor berdi.",
+        "Sanoatni rivojlantirishga e'tibor berdi.",
+        "Ijtimoiy sohalarga ko'p e'tibor berdi.",
+        "Askarlarni ta'minlashga e'tibor berdi."
+      ],
+      "correct_answer_index": "0"
+    },
+    {
+      "question": "Amir Temur qaysi davlatlar va xalqlar bilan jang qilgan? Ularning har biri bilan munosabatlari qanday rivojlangan?",
+      "answers": [
+        "Oltin O'rda va Xitoy bilan.",
+        "Mamlakatlar bilan do'stona munosabatlar o'rnatgan.",
+        "Turkiya va Eron bilan jang qilgan.",
+        "Hindiston va Arabiston bilan jang qilgan."
+      ],
+      "correct_answer_index": "3"
+    },
+    {
+      "question": "Amir Temurning madaniyat va san'atga qo'shgan hissasi qanday? U qaysi san'atkorlar va olimlar bilan tanilgan?",
+      "answers": [
+        "U san'at va adabiyotga e'tibor bermagan.",
+        "U bir nechta mashhur san'atkorlarni qo'llab-quvvatlagan.",
+        "U faqat arxitektura bilan shug'ullangan.",
+        "U faqat harbiy san'at bilan shug'ullangan."
+      ],
+      "correct_answer_index": "1"
+    },
+    {
+      "question": "Amir Temurning merosi zamonaviy O'zbekistonda qanday qadrlanadi? Uning tarixiy ahamiyati va xalq orasidagi o'rni qanday?",
+      "answers": [
+        "U faqat yovuz hukmdor sifatida eslanadi.",
+        "U O'zbekiston tarixi uchun muhim shaxs sifatida eslanadi.",
+        "U faqat urushlar bilan bog'liq shaxs sifatida eslanadi.",
+        "U xalq orasida unutilgan shaxs sifatida eslanadi."
+      ],
+      "correct_answer_index": "1"
+    },
+    {
+      "question": "Amir Temurning o'ziga xos shaxsiyati haqida qanday ma'lumotlar mavjud? U qanday xususiyatlarga ega bo'lgan va bu uning muvaffaqiyatiga qanday ta'sir ko'rsatgan?",
+      "answers": [
+        "U juda xushmuomala va muloyim bo'lgan.",
+        "U qat'iyatli va strategik fikrlashga ega bo'lgan.",
+        "U faqat jangovar xususiyatlarga ega bo'lgan.",
+        "U doimo o'zini boshqalar bilan solishtirgan."
+      ],
+      "correct_answer_index": "1"
+    },
+    {
+      "question": "Amir Temurning o'limidan keyin uning imperiyasi qanday taqsimlangan? Kimlar uning vorislari sifatida tanilgan?",
+      "answers": [
+        "Uning o'g'illari va nabiralari.",
+        "Uning do'stlari va ittifoqchilari.",
+        "Uning raqiblari va dushmanlari.",
+        "Uning harbiy qo'mondonlari."
+      ],
+      "correct_answer_index": "0"
+    },
+    {
+      "question": "Amir Temur davrida qaysi muhim qurilishlar va arxitektura yodgorliklari yaratilgan? Ular qanday maqsadlarda foydalanilgan?",
+      "answers": [
+        "Faqat harbiy bazalar qurilgan.",
+        "Madaniyat va ilm-fan markazlari sifatida foydalanilgan.",
+        "Faqat diniy inshootlar qurilgan.",
+        "Ularning barchasi shaharlarni himoya qilish uchun qurilgan."
+      ],
+      "correct_answer_index": "1"
+    },
+    {
+      "question": "Amir Temur o'zining jangovar yurishlari davomida qaysi innovatsion harbiy texnologiyalarni qo'llagan? Ularning janglarda qanday ahamiyati bo'lgan?",
+      "answers": [
+        "O'qotar qurollar va jangovar mashinalar.",
+        "Taktik harakatlar va strategik rejalashtirish.",
+        "Yengil jangovar qurollar va jangovar otlar.",
+        "Faqat an'anaviy qurollar."
+      ],
+      "correct_answer_index": "0"
+    }
+  ]
+}
