@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,103 +7,127 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum RoleEnum {
   ADMIN
   USER
 }
 
+enum PaymentType {
+  RECEIVED
+  WITHDRAWN
+}
+
+enum PaymenSource {
+  PAYME
+  BONUS
+  ADMIN
+  CLICK
+}
+
 model User {
-  id       String  @id @default(uuid())
-  username  String?
-  name      String?
-  role      RoleEnum @default(USER)
+  id         String  @id @default(uuid())
+  username   String?
+  name       String?
+  role       RoleEnum @default(USER)
   telegram_id String @unique
-  isActive  Boolean @default(true)
-  working      Boolean @default(false)
+  isActive   Boolean @default(true)
+  working    Boolean @default(false)
+  fileText   fileText[]
+  chat       Chat[]
+  balance    Int @default(2000)
+  payments   Payment[]
   created_at DateTime @default(now())
-  fileText  fileText[]
-  chat      Chat[]
   updated_at DateTime @updatedAt
 }
 
 model Chat {
-  id       String  @id @default(uuid())
-  name     String?
-  user     User @relation(fields: [user_id], references: [id])
-  pageCount Int @default(5)
-  plans     Plan[]
-  user_id  String
+  id          String  @id @default(uuid())
+  name        String?
+  user        User @relation(fields: [user_id], references: [id])
+  pageCount   Int @default(5)
+  plans       Plan[]
+  user_id     String
   description Description[]
-  language String?
-  lang     String?
-  checkUser String?
-  model_id String?
-  type     String?
-  scool    String?
-  author  String?
-  model   gptModel? @relation(fields: [model_id], references: [id])
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  language    String?
+  lang        String?
+  checkUser   String?
+  model_id    String?
+  type        String?
+  scool       String?
+  author      String?
+  model       gptModel? @relation(fields: [model_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }
 
 model Plan {
-  id     String  @id @default(uuid())
-  name   String
-  chat_id String
-  chat    Chat @relation(fields: [chat_id], references: [id])
+  id         String  @id @default(uuid())
+  name       String
+  chat_id    String
+  chat       Chat @relation(fields: [chat_id], references: [id])
   description Description[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
 
 model Description {
-  id       String  @id @default(uuid())
-  name     String?
-  content  Json[]
-  plan_id  String
+  id         String  @id @default(uuid())
+  name       String?
+  content    Json[]
+  plan_id    String
   plan       Plan @relation(fields: [plan_id], references: [id])
-  chat     Chat @relation(fields: [chat_id], references: [id])
-  chat_id  String
+  chat       Chat @relation(fields: [chat_id], references: [id])
+  chat_id    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
 
-
-
-
 model fileText {
-  id      String  @id @default(uuid())
-  name    String?
-  content String
-  user_id String
-  number  Int?
+  id         String  @id @default(uuid())
+  name       String?
+  content    String
+  user_id    String
+  number     Int?
   contentJson Json[]
-  user    User @relation(fields: [user_id], references: [id])
+  user       User @relation(fields: [user_id], references: [id])
+  payments   Payment[] @relation("fileTextPayments")
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+model Payment {
+  id          String  @id @default(uuid())
+  user        User @relation(fields: [user_id], references: [id])
+  user_id     String
+  amount      Int 
+  type        PaymentType @default(RECEIVED)
+  source      PaymenSource @default(PAYME)
+  fileText    fileText? @relation("fileTextPayments", fields: [fileText_id], references: [id])
+  fileText_id String?
+  description String?
+  created_at  DateTime @default(now())
 }
 
 model invitedUsers {
-  id       String  @id @default(uuid())
-  user_id  String? @unique
-  invited_user_id String
-  isActive Boolean @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-}
-model gptModel {
-  id      String  @id @default(uuid())
-  name    String
-  chats   Chat[]
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id               String  @id @default(uuid())
+  user_id          String? @unique
+  invited_user_id  String
+  isActive         Boolean @default(false)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
 }
 
+model gptModel {
+  id         String  @id @default(uuid())
+  name       String
+  chats      Chat[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
 
 model postgress_sessions {
-  id      String  @id
-  session String
+  id         String  @id
+  session    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }

@@ -1,11 +1,12 @@
 require("dotenv").config();
-import { Context, Middleware } from "telegraf";
+import { Context, Middleware, Scenes } from "telegraf";
 import { SceneContext } from "telegraf/typings/scenes";
 import bot from "./core/bot";
 import session from "./core/session";
 import stage from "./scenes/index";
-import { mainKeyboard } from "./utils/keyboards";
+import { mainKeyboard, paymentOptionsKeyboard, cardPaymentOptionsKeyboard } from "./utils/keyboards";
 import botStart from "./utils/startBot";
+import prisma from "../prisma/prisma";
 
 bot.use(session);
 
@@ -39,6 +40,22 @@ bot.hears(
   }
 );
 
+bot.hears("📝 Test yaratish", async (ctx: any) => {
+  await ctx.scene.enter("testCreation");
+});
+
+bot.hears("💰 Balans", async (ctx: any) => {
+  await ctx.scene.enter("balance");
+});
+
+bot.hears("📄 Qo'shimcha xizmatlar", async (ctx: any) => {
+  await ctx.reply("Qo'shimcha xizmatlar haqida ma'lumot.");
+});
+
+bot.hears("Foydali botlar", async (ctx: any) => {
+  await ctx.reply("Foydali botlar ro'yxati.");
+});
+
 bot.catch(async (err: any, ctx) => {
   const userId = ctx?.from?.id;
   if (userId) {
@@ -60,4 +77,44 @@ process.on("uncaughtException", (error) => {
 
 process.on("unhandledRejection", (reason, promise) => {
   console.log("Ushlanmagan rad etilgan va'da:", promise, "Sabab:", new Date());
+});
+
+bot.use((ctx: any, next: any) => {
+  if (ctx.message && ctx.message.text) {
+    const text = ctx.message.text;
+    if (text === "📝 Test yaratish") {
+      return ctx.scene.enter("testCreation");
+    } else if (text === "💰 Balans") {
+      return ctx.scene.enter("balance");
+    } else if (text === " Qo'shimcha xizmatlar") {
+      return ctx.reply("Qo'shimcha xizmatlar haqida ma'lumot.");
+    } else if (text === "Foydali botlar") {
+      return ctx.reply("Foydali botlar ro'yxati.");
+    }
+  }
+  return next();
+});
+
+bot.action("payme", async (ctx) => {
+  await ctx.deleteMessage();
+  await ctx.reply("To'lov shakli: PAYME\nQancha to'lov qilmoqchisiz?", paymentOptionsKeyboard);
+});
+
+bot.action("card", async (ctx: any) => {
+  await ctx.deleteMessage();
+  const paymentInfo = `
+❗ Eng kamida 5000 so'm to'lov qiling, 5000 dan kam summalar bilan muammo bo'lishi mumkin.
+
+💳 8600 0417 7483 8644
+👤 Abdulaliev Boburmirzo
+
+Ushbu karta raqamiga to'lov qiling va quyidagi tugmani bosing yoki /chek ni yuboring!
+  `;
+  await ctx.reply(paymentInfo, cardPaymentOptionsKeyboard);
+});
+
+// Handle back action
+bot.action("back", async (ctx: any) => {
+  await ctx.deleteMessage();
+  await ctx.scene.enter("balance");
 });

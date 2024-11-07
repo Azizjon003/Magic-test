@@ -25,7 +25,7 @@ testCreationScene.action(/questions_(\d+)/, async (ctx: any) => {
 
   const message = `
 📝 Test haqida:
-Til: 🇺🇿 O'zbek
+Til: ${ctx.session.language.toUpperCase()}
 Savollar: ${numberOfQuestions} ta
 
 🔖 Mavzu: ${ctx.session.testTopic}
