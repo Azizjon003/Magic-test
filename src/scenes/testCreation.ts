@@ -1,5 +1,9 @@
 import { Scenes } from "telegraf";
-import { languageKeyboard, questionsKeyboard, backToMainMenuKeyboard, mainKeyboard } from "../utils/keyboards";
+import {
+  confirmKeyboard,
+  languageKeyboard,
+  questionsKeyboard,
+} from "../utils/keyboards";
 
 const testCreationScene = new Scenes.BaseScene("testCreation");
 
@@ -15,7 +19,7 @@ testCreationScene.on("text", async (ctx: any) => {
 testCreationScene.action(/lang_(.+)/, async (ctx: any) => {
   const language = ctx.match[1];
   ctx.session.language = language;
-  await ctx.editMessageText(`Til tanlandi: ${ctx.match.input.split('_')[1]}`);
+  await ctx.editMessageText(`Til tanlandi: ${ctx.match.input.split("_")[1]}`);
   await ctx.reply("Savollar sonini tanlang:", questionsKeyboard);
 });
 
@@ -34,8 +38,7 @@ Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yub
   `;
 
   await ctx.editMessageText(`Savollar soni tanlandi: ${numberOfQuestions}`);
-  await ctx.reply(message, mainKeyboard);
-  await ctx.scene.leave();
+  await ctx.reply(message, confirmKeyboard);
 });
 
 export default testCreationScene;

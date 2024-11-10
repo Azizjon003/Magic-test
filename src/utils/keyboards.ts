@@ -5,7 +5,10 @@ export const mainKeyboard = Markup.keyboard([
   ["💰 Balans", "📄 Qo'shimcha xizmatlar"],
   ["Foydali botlar"],
 ]).resize();
-
+export const confirmKeyboard = Markup.inlineKeyboard([
+  Markup.button.callback("✅ Tasdiqlash", "confirm"),
+  Markup.button.callback("❌ Bekor qilish", "cancel"),
+]);
 export const languageKeyboard = Markup.inlineKeyboard([
   [
     Markup.button.callback("🇺🇿 O'zbek", "lang_uz"),
