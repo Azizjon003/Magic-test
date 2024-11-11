@@ -1,4 +1,3 @@
-import fs from "fs";
 import OpenAI from "openai";
 require("dotenv").config();
 const key = process.env["OPEN_AI_KEY"] || "";
@@ -163,15 +162,9 @@ export let createTestLanguage = async (
   //   )}`.replace(/\d+/g, "");
   // });
 
-  fs.writeFileSync("test.json", JSON.stringify(plans));
-
-  console.log(plans);
-
   return plans;
 };
 
 const testUseOpenAi = async () => {
   createTestLanguage("Amir Temur", 10, "uz", "Uzbek", 10, modelLang.gpt3);
 };
-
-testUseOpenAi();

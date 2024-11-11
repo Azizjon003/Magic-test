@@ -6,8 +6,8 @@ export const mainKeyboard = Markup.keyboard([
   ["Foydali botlar"],
 ]).resize();
 export const confirmKeyboard = Markup.inlineKeyboard([
-  Markup.button.callback("✅ Tasdiqlash", "confirm"),
-  Markup.button.callback("❌ Bekor qilish", "cancel"),
+  [Markup.button.callback("✅ Tasdiqlash", "confirm")],
+  [Markup.button.callback("❌ Bekor qilish", "cancel")],
 ]);
 export const languageKeyboard = Markup.inlineKeyboard([
   [
@@ -48,20 +48,29 @@ export const backToMainMenuKeyboard = Markup.keyboard([
 
 export const balanceKeyboard = Markup.inlineKeyboard([
   [Markup.button.callback("🛒 Xarid qilish", "buy")],
-  [Markup.button.callback("🆓 Bepul qo'lga kiritish", "referal")]
+  [Markup.button.callback("🆓 Bepul qo'lga kiritish", "referal")],
 ]);
 
 export const paymentKeyboard = Markup.inlineKeyboard([
-  [Markup.button.callback("💳 PAYME", "payme"), Markup.button.callback("💳 Karta orqali to'lov", "card")]
+  [
+    Markup.button.callback("💳 PAYME", "payme"),
+    Markup.button.callback("💳 Karta orqali to'lov", "card"),
+  ],
 ]);
 
 export const paymentOptionsKeyboard = Markup.inlineKeyboard([
-  [Markup.button.callback("5000 so'm", "payme_5000"), Markup.button.callback("10000 so'm", "payme_10000")],
-  [Markup.button.callback("20000 so'm", "payme_20000"), Markup.button.callback("50000 so'm", "payme_50000")],
-  [Markup.button.callback("Ortga", "back")]
+  [
+    Markup.button.callback("5000 so'm", "payme_5000"),
+    Markup.button.callback("10000 so'm", "payme_10000"),
+  ],
+  [
+    Markup.button.callback("20000 so'm", "payme_20000"),
+    Markup.button.callback("50000 so'm", "payme_50000"),
+  ],
+  [Markup.button.callback("Ortga", "back")],
 ]);
 
 export const cardPaymentOptionsKeyboard = Markup.inlineKeyboard([
   [Markup.button.callback("Checkni yuborish", "send_check")],
-  [Markup.button.callback("Ortga", "back")]
+  [Markup.button.callback("Ortga", "back")],
 ]);

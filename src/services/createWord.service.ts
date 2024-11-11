@@ -6,7 +6,6 @@ import {
   Paragraph,
   TextRun,
 } from "docx";
-import * as fs from "fs";
 
 interface TestAnswer {
   question: string;
@@ -19,7 +18,7 @@ interface TestData {
 }
 
 // Function to convert tests to Word document
-function createWordDoc(jsonData: TestData): Document {
+export async function createWordDoc(jsonData: any) {
   const doc = new Document({
     sections: [
       {
@@ -27,7 +26,7 @@ function createWordDoc(jsonData: TestData): Document {
         children: [
           // Title
           new Paragraph({
-            text: "Amir Temur haqida test savollari",
+            text: "Test savollari",
             heading: HeadingLevel.HEADING_1,
             alignment: AlignmentType.CENTER,
             spacing: {
@@ -42,7 +41,8 @@ function createWordDoc(jsonData: TestData): Document {
     ],
   });
 
-  return doc;
+  const buffer = await Packer.toBuffer(doc);
+  return buffer;
 }
 
 function generateQuestions(tests: TestAnswer[]): Paragraph[] {
@@ -129,16 +129,16 @@ function generateQuestions(tests: TestAnswer[]): Paragraph[] {
   return elements;
 }
 
-const jsonString: string = fs.readFileSync("test.json", "utf-8");
+// const jsonString: string = fs.readFileSync("test.json", "utf-8");
 
 // Parse JSON
-const jsonData: TestData = JSON.parse(jsonString);
+// const jsonData: TestData = JSON.parse(jsonString);
 
 // Create document
-const doc: Document = createWordDoc(jsonData);
+// const doc: Document = createWordDoc(jsonData);
 
 // Save document
-Packer.toBuffer(doc).then((buffer: Buffer) => {
-  fs.writeFileSync("test_questions.docx", buffer);
-  console.log("Word fayli muvaffaqiyatli yaratildi!");
-});
+// Packer.toBuffer(doc).then((buffer: Buffer) => {
+//   fs.writeFileSync("test_questions.docx", buffer);
+//   console.log("Word fayli muvaffaqiyatli yaratildi!");
+// });

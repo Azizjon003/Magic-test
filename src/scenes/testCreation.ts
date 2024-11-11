@@ -1,4 +1,9 @@
 import { Scenes } from "telegraf";
+import { createWordDoc } from "../services/createWord.service";
+import {
+  createTestLanguage,
+  modelLang,
+} from "../services/testUseOpenAi.service";
 import {
   confirmKeyboard,
   languageKeyboard,
@@ -39,6 +44,49 @@ Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yub
 
   await ctx.editMessageText(`Savollar soni tanlandi: ${numberOfQuestions}`);
   await ctx.reply(message, confirmKeyboard);
+});
+
+testCreationScene.action("confirm", async (ctx: any) => {
+  const message =
+    "2 - 5 daqiqa ichida test tayyorlanadi. Sabr qilishingizni so'raymiz!";
+
+  await ctx.editMessageText(message);
+
+  await ctx.sendChatAction("upload_document");
+  const { testTopic, language, numberOfQuestions } = ctx.session;
+  const fulLang =
+    language === "en"
+      ? "english"
+      : language === "uz"
+      ? "uzbek"
+      : language === "ru"
+      ? "russian"
+      : language === "ko"
+      ? "korean"
+      : language === "fr"
+      ? "french"
+      : language === "de"
+      ? "german"
+      : language === "es"
+      ? "spanish"
+      : "english";
+
+  const data = await createTestLanguage(
+    testTopic,
+    numberOfQuestions,
+    language,
+    fulLang,
+    numberOfQuestions,
+    modelLang.gpt3
+  );
+
+  const testCreateBuffer = await createWordDoc(data);
+
+  const id = Math.floor(Math.random() * 1000000);
+  await ctx.replyWithDocument({
+    source: testCreateBuffer,
+    filename: `${id}.docx`,
+  });
 });
 
 export default testCreationScene;
