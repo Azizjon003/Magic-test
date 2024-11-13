@@ -19,8 +19,12 @@ export let subcribeFunk = async (ctx: any, next: any) => {
             user_id: id,
           },
         });
-
-        if (!invitedUsers) {
+        const existingUser = await prisma.user.findFirst({  
+          where: {
+            telegram_id: invitedUser,
+          },
+        });
+        if (!invitedUsers && !existingUser) {
           const user = await prisma.user.findFirst({
             where: {
               telegram_id: id,
