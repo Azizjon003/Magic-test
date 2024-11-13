@@ -7,6 +7,7 @@ import stage from "./scenes/index";
 import { mainKeyboard, paymentOptionsKeyboard, cardPaymentOptionsKeyboard } from "./utils/keyboards";
 import botStart from "./utils/startBot";
 import prisma from "../prisma/prisma";
+import { subcribeFunk } from "./utils/subcribe";
 
 bot.use(session);
 
@@ -24,7 +25,7 @@ bot.use((ctx: any, next: any) => {
   return next();
 });
 
-// bot.use(subcribeFunk);
+bot.use(subcribeFunk);
 bot.start(async (ctx: any) => {
   return await ctx.scene.enter("start");
 });

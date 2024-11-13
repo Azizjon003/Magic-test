@@ -40,6 +40,27 @@ export let subcribeFunk = async (ctx: any, next: any) => {
               },
             });
 
+            await prisma.user.update({
+              where: { telegram_id: String(invitedUser) },
+              data: { balance: { increment: 1000 } },
+            });
+
+            await prisma.$transaction([
+              prisma.user.update({
+                where: { telegram_id: String(invitedUser) },
+                data: { balance: { increment: 1000 } },
+              }),
+              prisma.payment.create({
+                data: {
+                  user_id: invitedUsersId.id,
+                  amount: 1000,
+                  type: "RECEIVED",
+                  source: "REFERRAL",
+                  description: "Referral bonus",
+                },
+              }),
+            ]);
+
             console.log("invitedUsersId", invitedUsersId);
           }
         }

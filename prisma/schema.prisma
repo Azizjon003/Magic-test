@@ -22,6 +22,7 @@ enum PaymenSource {
   BONUS
   ADMIN
   CLICK
+  REFERRAL
 }
 
 model User {
