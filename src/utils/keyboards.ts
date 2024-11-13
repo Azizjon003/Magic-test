@@ -8,6 +8,7 @@ export const mainKeyboard = Markup.keyboard([
 export const confirmKeyboard = Markup.inlineKeyboard([
   [Markup.button.callback("✅ Tasdiqlash", "confirm")],
   [Markup.button.callback("❌ Bekor qilish", "cancel")],
+  [Markup.button.callback("Test tuzishda fayldan foydalanamiz", "file")],
 ]);
 export const languageKeyboard = Markup.inlineKeyboard([
   [

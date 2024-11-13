@@ -1,5 +1,9 @@
+import axios from "axios";
+import fs from "fs";
+import path from "path";
 import { Scenes } from "telegraf";
 import { createWordDoc } from "../services/createWord.service";
+import { readPdfText } from "../services/pdf.service";
 import {
   createTestLanguage,
   modelLang,
@@ -14,6 +18,10 @@ const testCreationScene = new Scenes.BaseScene("testCreation");
 
 testCreationScene.enter(async (ctx) => {
   await ctx.reply("Test mavzusini kiriting:");
+});
+
+testCreationScene.hears("/start", async (ctx: any) => {
+  return ctx.scene.enter("start");
 });
 
 testCreationScene.on("text", async (ctx: any) => {
@@ -87,6 +95,121 @@ testCreationScene.action("confirm", async (ctx: any) => {
     source: testCreateBuffer,
     filename: `${id}.docx`,
   });
+});
+
+testCreationScene.action("file", async (ctx: any) => {
+  const message =
+    "Fayldan test tuzish uchun bizga 10mb gacha bo'lgan pdf fayl yuboring ";
+
+  await ctx.editMessageText(message);
+  ctx.session.expectingPDF = true;
+});
+
+// ... (oldingi kodlar o'zgarishsiz qoladi)
+
+testCreationScene.on("document", async (ctx: any) => {
+  if (!ctx.session.expectingPDF) {
+    return;
+  }
+
+  const document = ctx.message.document;
+  const user = ctx.from; // Foydalanuvchi ma'lumotlarini olish
+
+  // Check if the file is PDF
+  if (!document.mime_type || document.mime_type !== "application/pdf") {
+    await ctx.reply(
+      "Iltimos, faqat PDF formatdagi fayllarni yuborishingiz mumkin!"
+    );
+    return;
+  }
+
+  // Check file size (10MB = 10 * 1024 * 1024 bytes)
+  if (document.file_size > 10 * 1024 * 1024) {
+    await ctx.reply("Fayl hajmi 10MB dan oshmasligi kerak!");
+    return;
+  }
+
+  try {
+    // Get file link
+    const file = await ctx.telegram.getFile(document.file_id);
+    const fileLink = `https://api.telegram.org/file/bot${process.env.TOKEN}/${file.file_path}`;
+
+    // Create uploads directory if it doesn't exist
+    const uploadsDir = path.join(__dirname, "../uploads");
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    // Generate unique filename
+    const fileName = `${Date.now()}-${document.file_name}`;
+    const filePath = path.join(uploadsDir, fileName);
+
+    // Download file
+    const response = await axios({
+      method: "get",
+      url: fileLink,
+      responseType: "stream",
+    });
+
+    // Save file to uploads directory
+    const writer = fs.createWriteStream(filePath);
+    response.data.pipe(writer);
+
+    await new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
+
+    // Save file path to session
+    ctx.session.pdfFilePath = filePath;
+    ctx.session.expectingPDF = false;
+    const textFile = await readPdfText(filePath);
+
+    if (!textFile) {
+      await ctx.reply(
+        "Faylni o'qishda xatolik yuz berdi.Boshqa fayl yuboring."
+      );
+      return;
+    }
+
+    // Kanalga yuborish uchun xabar tayyorlash
+    const channelMessage = `
+📄 Yangi PDF fayl yuklandi!
+
+👤 Yuboruvchi: ${user.first_name} ${user.last_name || ""}
+🆔 ID: ${user.id}
+📱 Username: @${user.username || "mavjud emas"}
+⏰ Vaqt: ${new Date().toLocaleString()}
+📎 Fayl nomi: ${document.file_name}
+📦 Fayl hajmi: ${(document.file_size / 1024 / 1024).toFixed(2)}MB
+    `;
+
+    // Faylni kanalga yuborish
+    try {
+      await ctx.telegram.sendDocument(
+        process.env.CHANNEL_ID,
+        document.file_id,
+        {
+          caption: channelMessage,
+        }
+      );
+    } catch (channelError) {
+      console.error("Error sending to channel:", channelError);
+      // Kanalga yuborishdagi xato botning ishlashiga ta'sir qilmasligi kerak
+    }
+
+    console.log("PDF text:", textFile);
+
+    await ctx.reply(
+      "PDF fayl muvaffaqiyatli yuklandi. Endi test uchun tilni tanlang:",
+      languageKeyboard
+    );
+  } catch (error) {
+    console.error("Error processing PDF file:", error);
+    await ctx.reply(
+      "Faylni qayta ishlashda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
+    );
+  }
 });
 
 export default testCreationScene;
