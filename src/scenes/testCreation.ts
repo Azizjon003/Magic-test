@@ -2,6 +2,7 @@ import axios from "axios";
 import fs from "fs";
 import path from "path";
 import { Scenes } from "telegraf";
+import prisma from "../../prisma/prisma";
 import { createWordDoc } from "../services/createWord.service";
 import { readPdfText } from "../services/pdf.service";
 import {
@@ -49,77 +50,161 @@ testCreationScene.action(/lang_(.+)/, async (ctx: any) => {
   const language = ctx.match[1];
   ctx.session.language = language;
   await ctx.editMessageText(`Til tanlandi: ${ctx.match.input.split("_")[1]}`);
-
-  const message = `
-📝 Yangilangan test haqida:
-Til: ${language.toUpperCase()}
-Savollar: ${ctx.session.numberOfQuestions} ta
-🔖 Mavzu: ${ctx.session.testTopic}
-
-Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yuboramiz.
-  `;
-
-  await ctx.reply(message, confirmKeyboard);
+  await ctx.reply("Savollar sonini tanlang:", questionsKeyboard);
 });
+
 testCreationScene.action(/questions_(\d+)/, async (ctx: any) => {
-  const numberOfQuestions = ctx.match[1];
+  if (!ctx.session.language) {
+    await ctx.reply("Avval tilni tanlang:", languageKeyboard);
+    return;
+  }
+
+  const numberOfQuestions = parseInt(ctx.match[1]);
   ctx.session.numberOfQuestions = numberOfQuestions;
 
   const message = `
-📝 Yangilangan test haqida:
-Til: ${ctx.session.language.toUpperCase()}
-Savollar: ${numberOfQuestions} ta
-🔖 Mavzu: ${ctx.session.testTopic}
-
-Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yuboramiz.
-  `;
+ 📝 Test haqida:
+ Til: ${ctx.session.language.toUpperCase()}
+ Savollar: ${numberOfQuestions} ta
+ 🔖 Mavzu: ${ctx.session.testTopic}
+ 
+ Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yuboramiz.
+ `;
 
   await ctx.editMessageText(message, confirmKeyboard);
 });
 
+// testCreationScene.action("confirm", async (ctx: any) => {
+//   const message =
+//     "2 - 5 daqiqa ichida test tayyorlanadi. Sabr qilishingizni so'raymiz!";
+
+//   await ctx.editMessageText(message);
+
+//   await ctx.sendChatAction("upload_document");
+//   const { testTopic, language, numberOfQuestions } = ctx.session;
+//   const fulLang =
+//     language === "en"
+//       ? "english"
+//       : language === "uz"
+//       ? "uzbek"
+//       : language === "ru"
+//       ? "russian"
+//       : language === "ko"
+//       ? "korean"
+//       : language === "fr"
+//       ? "french"
+//       : language === "de"
+//       ? "german"
+//       : language === "es"
+//       ? "spanish"
+//       : "english";
+
+//   const data = await createTestLanguage(
+//     testTopic,
+//     numberOfQuestions,
+//     language,
+//     fulLang,
+//     numberOfQuestions,
+//     modelLang.gpt3
+//   );
+
+//   const testCreateBuffer = await createWordDoc(data);
+
+//   const id = Math.floor(Math.random() * 1000000);
+//   await ctx.replyWithDocument({
+//     source: testCreateBuffer,
+//     filename: `${id}.docx`,
+//   });
+// });
+
 testCreationScene.action("confirm", async (ctx: any) => {
-  const message =
-    "2 - 5 daqiqa ichida test tayyorlanadi. Sabr qilishingizni so'raymiz!";
+  try {
+    const message =
+      "2 - 5 daqiqa ichida test tayyorlanadi. Sabr qilishingizni so'raymiz!";
+    await ctx.editMessageText(message);
+    await ctx.sendChatAction("upload_document");
 
-  await ctx.editMessageText(message);
+    const { testTopic, language, numberOfQuestions } = ctx.session;
+    const telegram_id = ctx.from.id.toString();
 
-  await ctx.sendChatAction("upload_document");
-  const { testTopic, language, numberOfQuestions } = ctx.session;
-  const fulLang =
-    language === "en"
-      ? "english"
-      : language === "uz"
-      ? "uzbek"
-      : language === "ru"
-      ? "russian"
-      : language === "ko"
-      ? "korean"
-      : language === "fr"
-      ? "french"
-      : language === "de"
-      ? "german"
-      : language === "es"
-      ? "spanish"
-      : "english";
+    // Foydalanuvchini bazadan topish
+    const user = await prisma.user.findUnique({
+      where: { telegram_id },
+    });
 
-  const data = await createTestLanguage(
-    testTopic,
-    numberOfQuestions,
-    language,
-    fulLang,
-    numberOfQuestions,
-    modelLang.gpt3
-  );
+    if (!user) {
+      throw new Error("Foydalanuvchi topilmadi");
+    }
 
-  const testCreateBuffer = await createWordDoc(data);
+    const fulLang =
+      language === "en"
+        ? "english"
+        : language === "uz"
+        ? "uzbek"
+        : language === "ru"
+        ? "russian"
+        : language === "ko"
+        ? "korean"
+        : language === "fr"
+        ? "french"
+        : language === "de"
+        ? "german"
+        : language === "es"
+        ? "spanish"
+        : "english";
 
-  const id = Math.floor(Math.random() * 1000000);
-  await ctx.replyWithDocument({
-    source: testCreateBuffer,
-    filename: `${id}.docx`,
-  });
+    // Chat yaratish
+    const chat = await prisma.chat.create({
+      data: {
+        name: testTopic,
+        user_id: user.id,
+        language: language,
+        lang: fulLang,
+        type: "test",
+        pageCount: Number(numberOfQuestions),
+      },
+    });
+
+    const data = await createTestLanguage(
+      testTopic,
+      numberOfQuestions,
+      language,
+      fulLang,
+      numberOfQuestions,
+      modelLang.gpt3
+    );
+    console.log(data);
+    // Description yaratish
+    await prisma.description.create({
+      data: {
+        name: testTopic,
+        content: JSON.parse(JSON.stringify(data)), // JSON array
+        plan_id: "test_" + Date.now(),
+        chat_id: chat.id,
+      },
+    });
+
+    const testCreateBuffer = await createWordDoc(data);
+    const id = Math.floor(Math.random() * 1000000);
+
+    await ctx.replyWithDocument({
+      source: testCreateBuffer,
+      filename: `${id}.docx`,
+    });
+
+    // To'lov yozish (agar pullik bo'lsa)
+    if (testTopic !== "free") {
+      // Foydalanuvchi balansini yangilash
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { balance: { decrement: 2000 } },
+      });
+    }
+  } catch (error) {
+    console.error("Test creation error:", error);
+    await ctx.reply("Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.");
+  }
 });
-
 testCreationScene.action("file", async (ctx: any) => {
   const message =
     "Fayldan test tuzish uchun bizga 10mb gacha bo'lgan pdf fayl yuboring ";
@@ -248,6 +333,7 @@ testCreationScene.action("change_language", async (ctx) => {
 
 // Mavzuni o'zgartirish uchun
 testCreationScene.action("change_topic", async (ctx: any) => {
+  await ctx.deleteMessage();
   await ctx.reply("Yangi test mavzusini kiriting:");
   ctx.session.isChangingTopic = true; // Mavzu o'zgartirilayotganini belgilash
 });

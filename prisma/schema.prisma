@@ -64,7 +64,7 @@ model Chat {
 model Description {
   id       String  @id @default(uuid())
   name     String?
-  content  Json[]
+  content  Json?
   plan_id  String
   chat     Chat @relation(fields: [chat_id], references: [id])
   chat_id  String
