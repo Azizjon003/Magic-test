@@ -220,7 +220,13 @@ testCreationScene.on("document", async (ctx: any) => {
 
   const document = ctx.message.document;
   const user = ctx.from; // Foydalanuvchi ma'lumotlarini olish
+  const users = await prisma.user.findUnique({
+    where: { telegram_id: user.id.toString() },
+  });
 
+  if (!users) {
+    return ctx.reply("Foydalanuvchi topilmadi");
+  }
   // Check if the file is PDF
   if (!document.mime_type || document.mime_type !== "application/pdf") {
     await ctx.reply(
@@ -277,6 +283,14 @@ testCreationScene.on("document", async (ctx: any) => {
       );
       return;
     }
+
+    await prisma.fileText.create({
+      data: {
+        name: document.file_name,
+        content: textFile,
+        user_id: users.id,
+      },
+    });
 
     // Kanalga yuborish uchun xabar tayyorlash
     const channelMessage = `
