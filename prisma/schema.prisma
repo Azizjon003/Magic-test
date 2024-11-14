@@ -78,7 +78,7 @@ model fileText {
   content    String
   user_id    String
   number     Int?
-  contentJson Json[]
+ 
   user       User @relation(fields: [user_id], references: [id])
   payments   Payment[] @relation("fileTextPayments")
   created_at DateTime @default(now())
