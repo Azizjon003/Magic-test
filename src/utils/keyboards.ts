@@ -13,6 +13,11 @@ export const confirmKeyboard = Markup.inlineKeyboard([
   [Markup.button.callback("Mavzuni o'zgartirish", "change_topic")],
   [Markup.button.callback("Test tuzishda fayldan foydalanamiz", "file")],
 ]);
+
+export const confirmKeyboard2 = Markup.inlineKeyboard([
+  [Markup.button.callback("✅ Tasdiqlash", "confirm_file")],
+  [Markup.button.callback("❌ Bekor qilish", "cancel")],
+]);
 export const languageKeyboard = Markup.inlineKeyboard([
   [
     Markup.button.callback("🇺🇿 O'zbek", "lang_uz"),

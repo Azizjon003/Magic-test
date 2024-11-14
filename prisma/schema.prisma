@@ -56,6 +56,7 @@ model Chat {
   scool       String?
   author      String?
   model       gptModel? @relation(fields: [model_id], references: [id])
+  fileText    fileText[]
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 }
@@ -80,6 +81,9 @@ model fileText {
   number     Int?
  
   user       User @relation(fields: [user_id], references: [id])
+
+  chat_id    String?
+  chat       Chat? @relation(fields: [chat_id], references: [id])
   payments   Payment[] @relation("fileTextPayments")
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

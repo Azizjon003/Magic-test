@@ -11,6 +11,7 @@ import {
 } from "../services/testUseOpenAi.service";
 import {
   confirmKeyboard,
+  confirmKeyboard2,
   languageKeyboard,
   questionsKeyboard,
 } from "../utils/keyboards";
@@ -205,6 +206,8 @@ testCreationScene.action("confirm", async (ctx: any) => {
     await ctx.reply("Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.");
   }
 });
+
+testCreationScene.action("confirm_file", async (ctx: any) => {});
 testCreationScene.action("file", async (ctx: any) => {
   const message =
     "Fayldan test tuzish uchun bizga 10mb gacha bo'lgan pdf fayl yuboring ";
@@ -284,11 +287,45 @@ testCreationScene.on("document", async (ctx: any) => {
       return;
     }
 
+    const { testTopic, language, numberOfQuestions } = ctx.session;
+
+    // Foydalanuvchini bazadan topish
+
+    const fulLang =
+      language === "en"
+        ? "english"
+        : language === "uz"
+        ? "uzbek"
+        : language === "ru"
+        ? "russian"
+        : language === "ko"
+        ? "korean"
+        : language === "fr"
+        ? "french"
+        : language === "de"
+        ? "german"
+        : language === "es"
+        ? "spanish"
+        : "english";
+
+    // Chat yaratish
+    const chat = await prisma.chat.create({
+      data: {
+        name: testTopic,
+        user_id: users.id,
+        language: language,
+        lang: fulLang,
+        type: "test",
+        pageCount: Number(numberOfQuestions),
+      },
+    });
+
     await prisma.fileText.create({
       data: {
         name: document.file_name,
         content: textFile,
         user_id: users.id,
+        chat_id: chat.id,
       },
     });
 
@@ -320,10 +357,17 @@ testCreationScene.on("document", async (ctx: any) => {
 
     console.log("PDF text:", textFile);
 
-    await ctx.reply(
-      "PDF fayl muvaffaqiyatli yuklandi. Endi test uchun tilni tanlang:",
-      languageKeyboard
-    );
+    const message = `
+    📝 Test haqida:
+    Til: ${ctx.session.language.toUpperCase()}
+    Savollar: ${numberOfQuestions} ta
+    🔖 Mavzu: ${ctx.session.testTopic}
+    Fayl: ${document.file_name}
+    
+    Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yuboramiz.
+    `;
+
+    await ctx.reply(message, confirmKeyboard2);
   } catch (error) {
     console.error("Error processing PDF file:", error);
     await ctx.reply(
