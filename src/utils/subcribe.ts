@@ -19,7 +19,7 @@ export let subcribeFunk = async (ctx: any, next: any) => {
             user_id: id,
           },
         });
-        const existingUser = await prisma.user.findFirst({  
+        const existingUser = await prisma.user.findFirst({
           where: {
             telegram_id: invitedUser,
           },
@@ -86,8 +86,8 @@ export let subcribeFunk = async (ctx: any, next: any) => {
     }
     let channels = [
       {
-        name: "Magic Slide",
-        link: "magi_slides",
+        name: "Quiz Market",
+        link: "quiz_market",
       },
     ];
     let allowedStatuses = ["creator", "administrator", "member"];

@@ -33,7 +33,8 @@ Balansingizda pul qolmagan. Balansingizni 2xil usulda to'ldirishingiz mumkin:
 
 balanceScene.action("referal", async (ctx: any) => {
   await ctx.deleteMessage();
-  const referralLink = `https://t.me/${process.env.BOT_USERNAME}?start=${ctx.from.id}`;
+  const botUsername = ctx.botInfo.username; // Bot username ni ctx.botInfo dan olish
+  const referralLink = `https://t.me/${botUsername}?start=${ctx.from.id}`;
   const message = `Do'stlaringizni taklif qiling va bonus oling! 🎉\n\nSizning referal havolangiz: [Referal Link](${referralLink})`;
 
   await ctx.replyWithMarkdown(message);
@@ -41,7 +42,8 @@ balanceScene.action("referal", async (ctx: any) => {
 
 balanceScene.action("buy", async (ctx: any) => {
   await ctx.deleteMessage();
-  const paymentMessage = "Qaysi usulda to'lov qilmoqchisiz? ❓ Quyidagi tugmalardan foydalaning 👇";
+  const paymentMessage =
+    "Qaysi usulda to'lov qilmoqchisiz? ❓ Quyidagi tugmalardan foydalaning 👇";
   await ctx.reply(paymentMessage, paymentKeyboard);
 });
 
@@ -50,19 +52,27 @@ balanceScene.action("send_check", async (ctx: any) => {
   await ctx.reply("Iltimos, to'lov chekingizni yuboring (rasm yoki fayl).");
 });
 
-balanceScene.on(['photo', 'document'], async (ctx: any) => {
+balanceScene.on(["photo", "document"], async (ctx: any) => {
   const userId = ctx.from.id;
   const admins = await getAdminUserIds(); // Implement this function to fetch admin IDs from the database
 
   for (const adminId of admins) {
-    await ctx.telegram.forwardMessage(adminId, ctx.chat.id, ctx.message.message_id);
+    await ctx.telegram.forwardMessage(
+      adminId,
+      ctx.chat.id,
+      ctx.message.message_id
+    );
   }
 
-  await ctx.reply("Biroz kuting adminlar sizning chekingizni ko'rib chiqadi va to'gri to'lov checki bo'lsa balansingizga pul tushiriladi bot sizga xabardor qiladi.");
+  await ctx.reply(
+    "Biroz kuting adminlar sizning chekingizni ko'rib chiqadi va to'gri to'lov checki bo'lsa balansingizga pul tushiriladi bot sizga xabardor qiladi."
+  );
 });
 
 async function getAdminUserIds() {
-  return (await prisma.user.findMany({ where: { role: "ADMIN" } })).map((user: any) => user.telegram_id);
+  return (await prisma.user.findMany({ where: { role: "ADMIN" } })).map(
+    (user: any) => user.telegram_id
+  );
 }
 
 export default balanceScene;
