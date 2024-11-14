@@ -25,33 +25,56 @@ testCreationScene.hears("/start", async (ctx: any) => {
 });
 
 testCreationScene.on("text", async (ctx: any) => {
-  ctx.session.testTopic = ctx.message.text;
-  await ctx.reply("Test uchun tilni tanlang:", languageKeyboard);
-});
+  if (ctx.session.isChangingTopic) {
+    ctx.session.testTopic = ctx.message.text;
+    ctx.session.isChangingTopic = false;
 
+    const message = `
+📝 Yangilangan test haqida:
+Til: ${ctx.session.language.toUpperCase()}
+Savollar: ${ctx.session.numberOfQuestions} ta
+🔖 Mavzu: ${ctx.session.testTopic}
+
+Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yuboramiz.
+    `;
+
+    await ctx.reply(message, confirmKeyboard);
+  } else {
+    // Mavjud text handler logikasi
+    ctx.session.testTopic = ctx.message.text;
+    await ctx.reply("Test uchun tilni tanlang:", languageKeyboard);
+  }
+});
 testCreationScene.action(/lang_(.+)/, async (ctx: any) => {
   const language = ctx.match[1];
   ctx.session.language = language;
   await ctx.editMessageText(`Til tanlandi: ${ctx.match.input.split("_")[1]}`);
-  await ctx.reply("Savollar sonini tanlang:", questionsKeyboard);
-});
 
+  const message = `
+📝 Yangilangan test haqida:
+Til: ${language.toUpperCase()}
+Savollar: ${ctx.session.numberOfQuestions} ta
+🔖 Mavzu: ${ctx.session.testTopic}
+
+Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yuboramiz.
+  `;
+
+  await ctx.reply(message, confirmKeyboard);
+});
 testCreationScene.action(/questions_(\d+)/, async (ctx: any) => {
   const numberOfQuestions = ctx.match[1];
   ctx.session.numberOfQuestions = numberOfQuestions;
 
   const message = `
-📝 Test haqida:
+📝 Yangilangan test haqida:
 Til: ${ctx.session.language.toUpperCase()}
 Savollar: ${numberOfQuestions} ta
-
 🔖 Mavzu: ${ctx.session.testTopic}
 
-Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yuboramiz. Sabr qilganingiz uchun rahmat!
+Eslatma: Buyurtmangiz tayyorlash jarayonida! 2-5 daqiqa ichida tayyor faylni yuboramiz.
   `;
 
-  await ctx.editMessageText(`Savollar soni tanlandi: ${numberOfQuestions}`);
-  await ctx.reply(message, confirmKeyboard);
+  await ctx.editMessageText(message, confirmKeyboard);
 });
 
 testCreationScene.action("confirm", async (ctx: any) => {
@@ -104,8 +127,6 @@ testCreationScene.action("file", async (ctx: any) => {
   await ctx.editMessageText(message);
   ctx.session.expectingPDF = true;
 });
-
-// ... (oldingi kodlar o'zgarishsiz qoladi)
 
 testCreationScene.on("document", async (ctx: any) => {
   if (!ctx.session.expectingPDF) {
@@ -211,5 +232,28 @@ testCreationScene.on("document", async (ctx: any) => {
     );
   }
 });
+
+// Savollar sonini o'zgartirish uchun
+testCreationScene.action("change_questions", async (ctx) => {
+  await ctx.editMessageText(
+    "Yangi savollar sonini tanlang:",
+    questionsKeyboard
+  );
+});
+
+// Tilni o'zgartirish uchun
+testCreationScene.action("change_language", async (ctx) => {
+  await ctx.editMessageText("Yangi tilni tanlang:", languageKeyboard);
+});
+
+// Mavzuni o'zgartirish uchun
+testCreationScene.action("change_topic", async (ctx: any) => {
+  await ctx.reply("Yangi test mavzusini kiriting:");
+  ctx.session.isChangingTopic = true; // Mavzu o'zgartirilayotganini belgilash
+});
+
+// Mavzu o'zgartirilganda
+
+// Lang va Questions actionlarida ham summary xabarni yangilash
 
 export default testCreationScene;
