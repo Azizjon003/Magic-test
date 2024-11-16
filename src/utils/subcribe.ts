@@ -2,144 +2,149 @@ import prisma from "../../prisma/prisma";
 
 export let subcribeFunk = async (ctx: any, next: any) => {
   try {
-    const data = String(ctx?.callbackQuery?.data);
+    console.log("handleReferral triggered");
+
     const action = ctx.message?.text?.split(" ")[0];
+    const userId = String(ctx?.from?.id);
+    let referrerId: string | null = null;
 
-    const id = String(ctx?.from?.id || "kimdir");
-    let invitedUser: any;
-
+    // Agar foydalanuvchi /start bilan kirsa va referal bo'lsa
     if (action === "/start") {
-      invitedUser = ctx.message?.text?.split(" ")[1];
-      if (invitedUser?.length > 24) {
-        invitedUser = null;
+      referrerId = ctx.message?.text?.split(" ")[1];
+      
+      // Referrer ID uzunligi 24dan oshsa, noto'g'ri deb hisoblaymiz
+      if ((referrerId ?? "").length > 24) {
+        referrerId = null;
       }
-      if (invitedUser) {
-        const invitedUsers = await prisma.invitedUsers.findFirst({
-          where: {
-            user_id: id,
-          },
+
+      console.log("Current User ID: ", userId);
+      console.log("Referrer ID: ", referrerId);
+
+      if (referrerId) {
+        // Avval foydalanuvchini va referrerni tekshiramiz
+        const isAlreadyReferred = await prisma.invitedUsers.findFirst({
+          where: { user_id: userId },
         });
-        const existingUser = await prisma.user.findFirst({
-          where: {
-            telegram_id: invitedUser,
-          },
+        const referrerExists = await prisma.user.findFirst({
+          where: { telegram_id: referrerId },
         });
-        if (!invitedUsers && !existingUser) {
-          const user = await prisma.user.findFirst({
-            where: {
-              telegram_id: id,
-            },
-          });
-          const invitedUsersId = await prisma.user.findFirst({
-            where: {
-              telegram_id: String(invitedUser),
-            },
+
+        if (!isAlreadyReferred && referrerExists) {
+          const newUser = await prisma.user.findFirst({
+            where: { telegram_id: userId },
           });
 
-          if (!user && invitedUsersId) {
-            await prisma.invitedUsers.create({
-              data: {
-                user_id: id,
-                invited_user_id: String(invitedUser),
-              },
-            });
+          if (!newUser) {
+            console.log("Adding referral bonus...");
 
-            await prisma.user.update({
-              where: { telegram_id: String(invitedUser) },
-              data: { balance: { increment: 1000 } },
-            });
-
-            await prisma.$transaction([
-              prisma.user.update({
-                where: { telegram_id: String(invitedUser) },
-                data: { balance: { increment: 1000 } },
-              }),
-              prisma.payment.create({
+            try {
+              // Referral yozuvini yaratish
+              await prisma.invitedUsers.create({
                 data: {
-                  user_id: invitedUsersId.id,
-                  amount: 1000,
-                  type: "RECEIVED",
-                  source: "REFERRAL",
-                  description: "Referral bonus",
+                  user_id: userId,
+                  invited_user_id: referrerId,
                 },
-              }),
-            ]);
+              });
 
-            console.log("invitedUsersId", invitedUsersId);
+              // Referrer balansini yangilash va to'lov yaratish
+              await prisma.$transaction([
+                prisma.user.update({
+                  where: { telegram_id: referrerId },
+                  data: { balance: { increment: 1000 } },
+                }),
+                prisma.payment.create({
+                  data: {
+                    user_id: referrerExists.id,
+                    amount: 1000,
+                    type: "RECEIVED",
+                    source: "REFERRAL",
+                    description: "Referral bonus",
+                  },
+                }),
+              ]);
+
+              // Referrerni xabardor qilish
+              await ctx.telegram.sendMessage(
+                referrerExists.telegram_id,
+                "Sizning balansingizga referal orqali 1000 sum qo'shildi!"
+              );
+
+              console.log("Referral bonus added successfully.");
+            } catch (error) {
+              console.error("Error adding referral bonus:", error);
+            }
           }
         }
       }
     }
+
+    // Chat turini tekshirish
     const chatType = ctx.chat?.type;
-    console.log(chatType);
-    if (
-      chatType === "channel" ||
-      chatType === "supergroup" ||
-      chatType === "group"
-    ) {
+    if (["channel", "supergroup", "group"].includes(chatType)) {
       return next();
     }
-    if (data?.includes("checkSubscribing")) {
-      invitedUser = data.split("_")[1];
 
+    const callbackData = String(ctx?.callbackQuery?.data || "");
+    if (callbackData.includes("checkSubscribing")) {
+      referrerId = callbackData.split("_")[1];
       await ctx.deleteMessage();
     }
-    let channels = [
+
+    // Tekshiriladigan kanallar ro'yxati
+    const channels = [
       {
         name: "Quiz Market",
         link: "quiz_market",
       },
     ];
-    let allowedStatuses = ["creator", "administrator", "member"];
+
+    const allowedStatuses = ["creator", "administrator", "member"];
+    const remainingChannels = [];
+
     for (let channel of channels) {
-      let username = `@${channel.link}`;
+      const username = `@${channel.link}`;
       try {
-        const { status } = await ctx.telegram.getChatMember(
-          username,
-          ctx.from.id
-        );
-        if (allowedStatuses.includes(status)) {
-          channels = channels.filter((c) => c !== channel);
+        const { status } = await ctx.telegram.getChatMember(username, ctx.from.id);
+        if (!allowedStatuses.includes(status)) {
+          remainingChannels.push(channel);
         }
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.error(`Error checking channel membership: ${username}`, error);
+        remainingChannels.push(channel);
       }
     }
-    if (!channels.length) {
-      if (data.includes("checkSubscribing")) {
-        ctx.reply(
+
+    if (!remainingChannels.length) {
+      if (callbackData.includes("checkSubscribing")) {
+        await ctx.reply(
           `Tabriklaymiz! Siz botdan to'liq foydalanishingiz mumkin! 🎉\n/start buyrug'ini bosing`
         );
       }
-
       return next();
     }
-    const text =
+
+    const joinPrompt =
       "❗️ Botdan to'liq foydalanish imkoniga quyidagi kanallarga a'zo bo'lish orqali erishishingiz mumkin!";
-    let keyboard: any = channels.map((channel) => [
+    const keyboard:any = remainingChannels.map((channel) => [
       {
         text: `A'zo bo'lish: ${channel.name}`,
         url: `https://t.me/${channel.link}`,
       },
     ]);
 
-    console.log(invitedUser);
     keyboard.push([
       {
         text: "Qo'shildim 🤝",
-        callback_data: invitedUser
-          ? `checkSubscribing_${invitedUser}`
+        callback_data: referrerId
+          ? `checkSubscribing_${referrerId}`
           : `checkSubscribing`,
       },
     ]);
 
-    console.log(keyboard);
-    return ctx.reply(text, {
-      reply_markup: {
-        inline_keyboard: keyboard,
-      },
+    await ctx.reply(joinPrompt, {
+      reply_markup: { inline_keyboard: keyboard },
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error in handleReferral:", error);
   }
 };

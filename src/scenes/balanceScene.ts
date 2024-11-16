@@ -31,7 +31,8 @@ Balansingizda pul qolmagan. Balansingizni 2xil usulda to'ldirishingiz mumkin:
   }
 });
 
-balanceScene.action("referal", async (ctx: any) => {
+balanceScene.command("referal", async (ctx: any) => {
+  console.log("Referal action triggered");
   await ctx.deleteMessage();
   const botUsername = ctx.botInfo.username; // Bot username ni ctx.botInfo dan olish
   const referralLink = `https://t.me/${botUsername}?start=${ctx.from.id}`;
@@ -40,7 +41,7 @@ balanceScene.action("referal", async (ctx: any) => {
   await ctx.replyWithMarkdown(message);
 });
 
-balanceScene.action("buy", async (ctx: any) => {
+balanceScene.command("buy", async (ctx: any) => {
   await ctx.deleteMessage();
   const paymentMessage =
     "Qaysi usulda to'lov qilmoqchisiz? ❓ Quyidagi tugmalardan foydalaning 👇";

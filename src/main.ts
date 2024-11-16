@@ -119,3 +119,4 @@ bot.action("back", async (ctx: any) => {
   await ctx.deleteMessage();
   await ctx.scene.enter("balance");
 });
+
