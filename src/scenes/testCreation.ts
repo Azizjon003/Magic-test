@@ -6,6 +6,7 @@ import prisma from "../../prisma/prisma";
 import { createWordDoc } from "../services/createWord.service";
 import { readPdfText } from "../services/pdf.service";
 import {
+  createByFileTest,
   createTestLanguage,
   modelLang,
 } from "../services/testUseOpenAi.service";
@@ -207,7 +208,74 @@ testCreationScene.action("confirm", async (ctx: any) => {
   }
 });
 
-testCreationScene.action("confirm_file", async (ctx: any) => {});
+testCreationScene.action("confirm_file", async (ctx: any) => {
+  try {
+    const message =
+      "2 - 5 daqiqa ichida test tayyorlanadi. Sabr qilishingizni so'raymiz!";
+    await ctx.editMessageText(message);
+    await ctx.sendChatAction("upload_document");
+
+    const { testTopic, language, numberOfQuestions } = ctx.session;
+    const telegram_id = ctx.from.id.toString();
+
+    // Foydalanuvchini bazadan topish
+    const user = await prisma.user.findUnique({
+      where: { telegram_id },
+    });
+
+    if (!user) {
+      throw new Error("Foydalanuvchi topilmadi");
+    }
+
+    const chat = await prisma.chat.findFirst({
+      where: {
+        user_id: user.id,
+      },
+      include: {
+        description: true,
+        fileText: true,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+    if (!chat) {
+      return ctx.reply("Chat topilmadi");
+    }
+
+    const fileContent = chat.fileText[0].content;
+
+    const data = await createByFileTest(
+      testTopic,
+      numberOfQuestions,
+      language,
+      String(chat.lang),
+      numberOfQuestions,
+      fileContent
+    );
+
+    await prisma.description.create({
+      data: {
+        name: testTopic,
+        content: JSON.parse(JSON.stringify(data)), // JSON array
+        plan_id: "test_" + Date.now(),
+        chat_id: chat.id,
+      },
+    });
+
+    const testCreateBuffer = await createWordDoc(data);
+    const id = Math.floor(Math.random() * 1000000);
+
+    await ctx.replyWithDocument({
+      source: testCreateBuffer,
+      filename: `${id}.docx`,
+    });
+  } catch (error) {
+    console.error("Test creation error:", error);
+    await ctx.reply("Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.");
+  }
+});
 testCreationScene.action("file", async (ctx: any) => {
   const message =
     "Fayldan test tuzish uchun bizga 10mb gacha bo'lgan pdf fayl yuboring ";

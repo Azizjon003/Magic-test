@@ -165,6 +165,108 @@ export let createTestLanguage = async (
   return plans;
 };
 
+export let createByFileTest = async (
+  name: string,
+  pages: number,
+  lang: string,
+  language: string,
+  pagesCount: number,
+  contentFile: string,
+  model: modelLang = modelLang.gpt3
+) => {
+  let models = {
+    "gpt-3": "gpt-4o-mini",
+    "gpt-4": "gpt-4o-2024-08-06",
+  };
+
+  const systemPrompt = `
+    You are a professional test developer specializing in creating comprehensive and insightful test questions. 
+    Your task is to create ${pages} test questions in ${language}, using the information provided in the file located at "./input.txt" for the topic "${name}".
+    
+    Instructions:
+    1. Carefully analyze the content of the file at "./input.txt" to formulate ${pages} unique test questions.
+    2. Write each question in ${language}, focusing specifically on the topic "${name}".
+    3. Each question must be between 30-50 words long to provide clear context and depth.
+    4. Ensure all questions are precise, contextually relevant, and based solely on the information in the file.
+    5. Each question must be unique, and no ideas or phrasings should be repeated.
+    6. Use the exact JSON format provided below without any deviations.
+
+    Requirements:
+    - Questions must be well-structured and clear, encouraging critical thinking.
+    - The file data must be accurately interpreted, ensuring factual correctness.
+    - If any issue arises while reading the file, report it immediately.
+    - Include a valid "correct_answer_index" for each question, ensuring it aligns with the file data.
+
+
+    Your goal is to generate ${pages} high-quality and accurate test questions in ${language} based on the content of the file. 
+    Ensure all instructions are strictly followed, and the final output meets the specified requirements.
+  `;
+
+  let queryJson = {
+    input_text: systemPrompt,
+    output_format: "json",
+    json_structure: {
+      tests: [
+        ...Array.from({ length: pages }, () => {
+          return {
+            question: `{{${lang}_quession}}`,
+            answers: [
+              `{{${lang}_answer}}`,
+              `{{${lang}_answer}}`,
+              `{{${lang}_answer}}`,
+              `{{${lang}_answer}}`,
+            ],
+            correct_answer_index: "number answer",
+          };
+        }),
+      ],
+    },
+  };
+
+  const chatCompletion = await openai.chat.completions.create({
+    messages: [
+      { role: "system", content: systemPrompt },
+      {
+        role: "user",
+        content: JSON.stringify(queryJson),
+      },
+      {
+        role: "user",
+        content: contentFile,
+      },
+    ],
+
+    model: models["gpt-3"],
+    temperature: 0.5,
+
+    max_tokens: pagesCount < 6 ? 2000 : pagesCount < 12 ? 2500 : 3500,
+    response_format: {
+      type: "json_object",
+    },
+  });
+  console.log(chatCompletion.choices[0].message.content);
+  const content = chatCompletion.choices[0].message.content || ""; // Handle null case
+
+  let plans;
+  try {
+    plans = JSON.parse(content);
+
+    if (!plans) {
+      plans = JSON.parse(content);
+    }
+  } catch (error) {}
+
+  let leth = plans?.length;
+  console.log(plans);
+
+  // let plansText = plans.map((plan: any) => {
+  //   return `${xss(plan[lang])} && ${xss(
+  //     plan[lang == "english" ? "english" : "eng"]
+  //   )}`.replace(/\d+/g, "");
+  // });
+
+  return plans;
+};
 const testUseOpenAi = async () => {
   createTestLanguage("Amir Temur", 10, "uz", "Uzbek", 10, modelLang.gpt3);
 };
