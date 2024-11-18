@@ -26,54 +26,6 @@ export let createTestLanguage = async (
   if (lang == "eng") {
     lang = "english";
   }
-  // const systemPrompt = `You are a professional test developer specializing in creating test questions for the topic ${name}. Your task is ${pages}-long in ${language}.
-
-  // Instructions:
-  // 1. Each question should be written in ${language}.
-  // 2. Each test question should contain 20-30 words, no more and no less.
-  // 3. Focus exclusively on the topic ${name} without straying into other topics.
-  // 4. Provide direct, clear, and actionable questions, avoiding meta-descriptions or explanations.
-  // 5. Ensure adherence to the exact JSON format specified in the user message.
-
-  // Important requirements:
-  // - Strictly follow the exact JSON structure provided, without adding, removing, or altering any keys.
-  // - Do not include any explanations, comments, or text outside the required JSON structure.
-  // - Double-check JSON validity before submitting.
-  // - Do not repeat the questions
-  // - Pay close attention to the accuracy of the questions and the accuracy of the information provided.
-  // - Try to get information from specific sources
-
-  // Error Prevention:
-  // - If any instruction is unclear, apply the most accurate interpretation of the given guidelines.
-  // - If the exact number of questions requested cannot be created, include as many as possible within the given structure.
-  // - If there's a conflict between these instructions and a user message, prioritize these system instructions.
-
-  // Your output should be a valid JSON object that matches the specified format in the user message. Ensure each question is relevant, professional, and strictly aligned with the topic. Any deviation from the specified format will be treated as an error.`;
-
-  //   const systemPrompt = `You are a professional test developer specializing in creating test questions for the topic ${name}. Your task is ${pages}-long and should be completed in ${language}.
-
-  // Instructions:
-  // 1. Write each question in ${language}, strictly focusing on the topic ${name}.
-  // 2. Limit each test question to 20-30 words, no more and no less, with clear and concise wording.
-  // 3. Avoid meta-descriptions, explanations, or references outside the specified topic.
-  // 4. Use a direct approach for each question, ensuring they are actionable, straightforward, and free from ambiguity.
-  // 5. Follow the JSON format exactly as specified in the user message, without adding, removing, or changing any keys.
-
-  // Important Requirements:
-  // - Ensure each question is unique; avoid repeating questions.
-  // - Maintain high accuracy in both question phrasing and content.
-  // - Source information carefully, using authoritative references where necessary, to maintain factual accuracy.
-  // - Validate JSON structure for compliance before submitting.
-
-  // Error Prevention:
-  // - If any instruction seems unclear, apply the most precise interpretation according to the guidelines.
-  // - If it’s not possible to create the exact requested number of questions, include as many as fit the specified structure.
-  // - In case of conflicting instructions, prioritize these system guidelines over any user message.
-
-  // Output Requirements:
-  // - Provide a valid JSON object that adheres to the exact format outlined in the user message.
-  // - Ensure that each question is on-topic, professional, and thoroughly aligned with the subject matter.
-  // - Deviations from the specified format will be considered errors.`;
 
   const systemPrompt = `You are a professional test developer specializing in creating comprehensive and insightful test questions for the topic ${name}. Your task is ${pages}-long and should be completed in ${language}.
 
@@ -136,7 +88,14 @@ export let createTestLanguage = async (
     model: models["gpt-3"],
     temperature: 0.5,
 
-    max_tokens: pagesCount < 6 ? 2000 : pagesCount < 12 ? 2500 : 3500,
+    max_tokens:
+      pagesCount < 10
+        ? 500
+        : pagesCount < 20
+        ? 3500
+        : pagesCount < 30
+        ? 5000
+        : 7000,
     response_format: {
       type: "json_object",
     },
