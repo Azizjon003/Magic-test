@@ -1,6 +1,12 @@
 import { Scenes } from "telegraf";
 import prisma from "../../prisma/prisma";
-import { balanceKeyboard, paymentKeyboard } from "../utils/keyboards";
+import { processPayment } from "../services/payment.service";
+import {
+  balanceKeyboard,
+  cardPaymentOptionsKeyboard,
+  paymentKeyboard,
+  paymentOptionsKeyboard,
+} from "../utils/keyboards";
 
 const balanceScene = new Scenes.BaseScene("balance");
 
@@ -31,21 +37,81 @@ Balansingizda pul qolmagan. Balansingizni 2xil usulda to'ldirishingiz mumkin:
   }
 });
 
-balanceScene.command("referal", async (ctx: any) => {
+balanceScene.action("payme", async (ctx) => {
+  await ctx.deleteMessage();
+  await ctx.reply(
+    "To'lov shakli: PAYME\nQancha to'lov qilmoqchisiz?",
+    paymentOptionsKeyboard
+  );
+});
+
+balanceScene.action("card", async (ctx: any) => {
+  await ctx.deleteMessage();
+  const paymentInfo = `
+❗ Eng kamida 5000 so'm to'lov qiling, 5000 dan kam summalar bilan muammo bo'lishi mumkin.
+
+💳 8600 0417 7483 8644
+👤 Abdulaliev Boburmirzo
+
+Ushbu karta raqamiga to'lov qiling va quyidagi tugmani bosing yoki /chek ni yuboring!
+  `;
+  await ctx.reply(paymentInfo, cardPaymentOptionsKeyboard);
+});
+
+// Handle back action
+balanceScene.action("back", async (ctx: any) => {
+  await ctx.deleteMessage();
+  await ctx.scene.enter("balance");
+});
+
+balanceScene.action("referal", async (ctx: any) => {
   console.log("Referal action triggered");
   await ctx.deleteMessage();
   const botUsername = ctx.botInfo.username; // Bot username ni ctx.botInfo dan olish
   const referralLink = `https://t.me/${botUsername}?start=${ctx.from.id}`;
   const message = `Do'stlaringizni taklif qiling va bonus oling! 🎉\n\nSizning referal havolangiz: [Referal Link](${referralLink})`;
+  const shareLink = `https://telegram.me/share/url?url=${referralLink}`;
+  const inlineKeyboard = {
+    inline_keyboard: [
+      [
+        {
+          text: "👥 Do'stlarni taklif qilish",
+          url: shareLink,
+        },
+      ],
+    ],
+  };
 
-  await ctx.replyWithMarkdown(message);
+  await ctx.replyWithMarkdown(message, {
+    reply_markup: inlineKeyboard,
+    disable_web_page_preview: true,
+  });
 });
 
-balanceScene.command("buy", async (ctx: any) => {
+balanceScene.action("buy", async (ctx: any) => {
   await ctx.deleteMessage();
   const paymentMessage =
     "Qaysi usulda to'lov qilmoqchisiz? ❓ Quyidagi tugmalardan foydalaning 👇";
   await ctx.reply(paymentMessage, paymentKeyboard);
+});
+
+balanceScene.action(/^[0-9]+$/, async (ctx: any) => {
+  try {
+    const number = parseInt(ctx.callbackQuery.data);
+
+    // Son 0 dan katta bo'lishi kerak
+    if (number <= 0) {
+      await ctx.reply("❌ Iltimos, 0 dan katta son kiriting!");
+      return;
+    }
+
+    console.log("To'lov summasi:", number);
+    ctx.reply("To'lov summasi: " + number + " so'm");
+    processPayment(ctx, ctx.from.id, number);
+  } catch (error) {
+    console.error("Xatolik yuz berdi:", error);
+    await ctx.reply("⚠️ Xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.");
+  }
 });
 
 balanceScene.action("send_check", async (ctx: any) => {

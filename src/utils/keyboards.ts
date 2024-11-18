@@ -69,12 +69,16 @@ export const paymentKeyboard = Markup.inlineKeyboard([
 
 export const paymentOptionsKeyboard = Markup.inlineKeyboard([
   [
-    Markup.button.callback("5000 so'm", "payme_5000"),
-    Markup.button.callback("10000 so'm", "payme_10000"),
+    Markup.button.callback("5000 so'm", "5000"),
+    Markup.button.callback("10000 so'm", "10000"),
   ],
   [
-    Markup.button.callback("20000 so'm", "payme_20000"),
-    Markup.button.callback("50000 so'm", "payme_50000"),
+    Markup.button.callback("5000 so'm", "15000"),
+    Markup.button.callback("10000 so'm", "20000"),
+  ],
+  [
+    Markup.button.callback("20000 so'm", "25000"),
+    Markup.button.callback("50000 so'm", "50000"),
   ],
   [Markup.button.callback("Ortga", "back")],
 ]);

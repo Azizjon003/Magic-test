@@ -88,6 +88,11 @@ model fileText {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
+enum walletRequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
 
 model Payment {
   id          String  @id @default(uuid())
@@ -95,6 +100,7 @@ model Payment {
   user_id     String
   amount      Int 
   type        PaymentType @default(RECEIVED)
+  status      walletRequestStatus  @default(PENDING)
   source      PaymenSource @default(PAYME)
   fileText    fileText? @relation("fileTextPayments", fields: [fileText_id], references: [id])
   fileText_id String?

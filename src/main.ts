@@ -1,12 +1,16 @@
 require("dotenv").config();
-import { Context, Middleware, Scenes } from "telegraf";
+import console from "console";
+import { Context, Middleware } from "telegraf";
 import { SceneContext } from "telegraf/typings/scenes";
 import bot from "./core/bot";
 import session from "./core/session";
 import stage from "./scenes/index";
-import { mainKeyboard, paymentOptionsKeyboard, cardPaymentOptionsKeyboard } from "./utils/keyboards";
+import {
+  cardPaymentOptionsKeyboard,
+  mainKeyboard,
+  paymentOptionsKeyboard,
+} from "./utils/keyboards";
 import botStart from "./utils/startBot";
-import prisma from "../prisma/prisma";
 import { subcribeFunk } from "./utils/subcribe";
 
 bot.use(session);
@@ -40,22 +44,6 @@ bot.hears(
     ctx.reply("Nomalum buyruq.Qayta /start buyrug'ini bosing");
   }
 );
-
-bot.hears("📝 Test yaratish", async (ctx: any) => {
-  await ctx.scene.enter("testCreation");
-});
-
-bot.hears("💰 Balans", async (ctx: any) => {
-  await ctx.scene.enter("balance");
-});
-
-bot.hears("📄 Qo'shimcha xizmatlar", async (ctx: any) => {
-  await ctx.reply("Qo'shimcha xizmatlar haqida ma'lumot.");
-});
-
-bot.hears("Foydali botlar", async (ctx: any) => {
-  await ctx.reply("Foydali botlar ro'yxati.");
-});
 
 bot.catch(async (err: any, ctx) => {
   const userId = ctx?.from?.id;
@@ -96,27 +84,26 @@ bot.use((ctx: any, next: any) => {
   return next();
 });
 
-bot.action("payme", async (ctx) => {
+bot.command("referal", async (ctx: any) => {
+  console.log("Referal action triggered");
   await ctx.deleteMessage();
-  await ctx.reply("To'lov shakli: PAYME\nQancha to'lov qilmoqchisiz?", paymentOptionsKeyboard);
+  const botUsername = ctx.botInfo.username; // Bot username ni ctx.botInfo dan olish
+  const referralLink = `https://t.me/${botUsername}?start=${ctx.from.id}`;
+  const message = `Do'stlaringizni taklif qiling va bonus oling! 🎉\n\nSizning referal havolangiz: [Referal Link](${referralLink})`;
+  const shareLink = `https://telegram.me/share/url?url=${referralLink}`;
+  const inlineKeyboard = {
+    inline_keyboard: [
+      [
+        {
+          text: "👥 Do'stlarni taklif qilish",
+          url: shareLink,
+        },
+      ],
+    ],
+  };
+
+  await ctx.replyWithMarkdown(message, {
+    reply_markup: inlineKeyboard,
+    disable_web_page_preview: true,
+  });
 });
-
-bot.action("card", async (ctx: any) => {
-  await ctx.deleteMessage();
-  const paymentInfo = `
-❗ Eng kamida 5000 so'm to'lov qiling, 5000 dan kam summalar bilan muammo bo'lishi mumkin.
-
-💳 8600 0417 7483 8644
-👤 Abdulaliev Boburmirzo
-
-Ushbu karta raqamiga to'lov qiling va quyidagi tugmani bosing yoki /chek ni yuboring!
-  `;
-  await ctx.reply(paymentInfo, cardPaymentOptionsKeyboard);
-});
-
-// Handle back action
-bot.action("back", async (ctx: any) => {
-  await ctx.deleteMessage();
-  await ctx.scene.enter("balance");
-});
-
