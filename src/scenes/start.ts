@@ -3,9 +3,6 @@ import enabled from "../utils/enabled";
 import { mainKeyboard } from "../utils/keyboards";
 const scene = new Scenes.BaseScene("start");
 
-export let keyboard = [["Start"]];
-export let admin_keyboard = [["Admin"]];
-
 scene.enter(async (ctx: any) => {
   const user_id = ctx.from?.id;
 

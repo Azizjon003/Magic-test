@@ -2,8 +2,7 @@ import { Markup } from "telegraf";
 
 export const mainKeyboard = Markup.keyboard([
   ["📝 Test yaratish"],
-  ["💰 Balans", "📄 Qo'shimcha xizmatlar"],
-  ["Foydali botlar"],
+  ["💰 Balans", "Foydali botlar"],
 ]).resize();
 export const confirmKeyboard = Markup.inlineKeyboard([
   [Markup.button.callback("✅ Tasdiqlash", "confirm")],
@@ -40,15 +39,15 @@ export const questionsKeyboard = Markup.inlineKeyboard([
     Markup.button.callback("10", "questions_10"),
     Markup.button.callback("15", "questions_15"),
     Markup.button.callback("20", "questions_20"),
-    Markup.button.callback("25", "questions_25"),
+    // Markup.button.callback("25", "questions_25"),
   ],
-  [
-    Markup.button.callback("30", "questions_30"),
-    Markup.button.callback("35", "questions_35"),
-    Markup.button.callback("40", "questions_40"),
-    Markup.button.callback("45", "questions_45"),
-    Markup.button.callback("50", "questions_50"),
-  ],
+  // [
+  //   Markup.button.callback("30", "questions_30"),
+  //   Markup.button.callback("35", "questions_35"),
+  //   Markup.button.callback("40", "questions_40"),
+  //   Markup.button.callback("45", "questions_45"),
+  //   Markup.button.callback("50", "questions_50"),
+  // ],
 ]);
 
 export const backToMainMenuKeyboard = Markup.keyboard([
@@ -68,10 +67,7 @@ export const paymentKeyboard = Markup.inlineKeyboard([
 ]);
 
 export const paymentOptionsKeyboard = Markup.inlineKeyboard([
-  [
-    Markup.button.callback("1000 so'm", "1000"),
-    Markup.button.callback("2000 so'm", "2000"),
-  ],
+  [Markup.button.callback("2000 so'm", "2000")],
   [
     Markup.button.callback("5000 so'm", "5000"),
     Markup.button.callback("10000 so'm", "10000"),

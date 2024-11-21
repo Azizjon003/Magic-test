@@ -104,7 +104,7 @@ export const parseItems = (dataString: string) => {
 };
 
 export const parseTitles = (rawData: string) => {
-  const regexPattern = /"uzTitle": "(.*?)",\s*"enTitle": "(.*?)"/gs;
+  const regexPattern = /"uzTitle": "(.*?)",\s*"enTitle": "(.*?)"/g;
   let matches;
   const results = [];
 
