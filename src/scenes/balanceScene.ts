@@ -48,7 +48,7 @@ balanceScene.action("payme", async (ctx) => {
 balanceScene.action("card", async (ctx: any) => {
   await ctx.deleteMessage();
   const paymentInfo = `
-❗ Eng kamida 5000 so'm to'lov qiling, 5000 dan kam summalar bilan muammo bo'lishi mumkin.
+❗ Eng kamida 2000 so'm to'lov qiling, 2000 dan kam summalar bilan muammo bo'lishi mumkin.
 
 💳 5614 6868 0954 7279
 👤 Aliqulov Azizjon
