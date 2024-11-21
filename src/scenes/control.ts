@@ -30,4 +30,10 @@ scene.hears("💰 Balans", async (ctx: any) => {
   await ctx.scene.enter("balance");
 });
 
+scene.hears("Foydali botlar", async (ctx: any) => {
+  await ctx.reply(
+    "Foydali botlar ro'yxati \n 1. @Magic_slides_bot - taqdimot tayyorlovchi bot"
+  );
+});
+
 export default scene;
