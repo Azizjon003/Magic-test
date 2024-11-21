@@ -44,7 +44,9 @@ export let createTestLanguage = async (
   - Pay close attention to the accuracy of the questions and the accuracy of the information provided.
   - Try to get information from specific sources
   - the meaning and accuracy of the information in the questions should be worked out with 100% accuracy
-  
+  - Let the answers to the questions be varied. Pay close attention to the clarity of the questions. Pay attention to the content of the questions. Use clear facts in the questions and answers.
+   - Pay close attention to the clarity of the questions. Pay attention to the content of the questions. Use clear facts in the questions and answers. Avoid answers where several answers are correct and several answers are incorrect.  
+   - The answers should be exactly one, not multiple.
   Error Prevention:
   - If any instruction seems unclear, interpret it as accurately as possible based on these guidelines.
   - If you cannot meet the exact requested number of questions, create as many as possible within the required format.

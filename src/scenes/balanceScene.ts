@@ -50,8 +50,8 @@ balanceScene.action("card", async (ctx: any) => {
   const paymentInfo = `
 ❗ Eng kamida 5000 so'm to'lov qiling, 5000 dan kam summalar bilan muammo bo'lishi mumkin.
 
-💳 8600 0417 7483 8644
-👤 Abdulaliev Boburmirzo
+💳 5614 6868 0954 7279
+👤 Aliqulov Azizjon
 
 Ushbu karta raqamiga to'lov qiling va quyidagi tugmani bosing yoki /chek ni yuboring!
   `;

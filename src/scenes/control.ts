@@ -36,4 +36,4 @@ scene.hears("Foydali botlar", async (ctx: any) => {
   );
 });
 
-export default scene;
+ export default scene;
