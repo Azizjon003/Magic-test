@@ -275,7 +275,7 @@ testCreationScene.action("confirm_file", async (ctx: any) => {
 });
 testCreationScene.action("file", async (ctx: any) => {
   const message =
-    "Fayldan test tuzish uchun bizga 10mb gacha bo'lgan pdf fayl yuboring ";
+    "Fayldan test tuzish uchun bizga 5mb gacha bo'lgan pdf fayl yuboring ";
 
   await ctx.editMessageText(message);
   ctx.session.expectingPDF = true;
@@ -304,7 +304,7 @@ testCreationScene.on("document", async (ctx: any) => {
   }
 
   // Check file size (10MB = 10 * 1024 * 1024 bytes)
-  if (document.file_size > 10 * 1024 * 1024) {
+  if (document.file_size > 5 * 1024 * 1024) {
     await ctx.reply("Fayl hajmi 10MB dan oshmasligi kerak!");
     return;
   }
