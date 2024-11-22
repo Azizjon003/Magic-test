@@ -62,7 +62,7 @@ export const balanceKeyboard = Markup.inlineKeyboard([
 export const paymentKeyboard = Markup.inlineKeyboard([
   [
     Markup.button.callback("💳 PAYME", "payme"),
-    Markup.button.callback("💳 Karta orqali to'lov", "card"),
+    // Markup.button.callback("💳 Karta orqali to'lov", "card"),
   ],
 ]);
 

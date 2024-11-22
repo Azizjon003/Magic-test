@@ -11,7 +11,7 @@ export let subcribeFunk = async (ctx: any, next: any) => {
     // Agar foydalanuvchi /start bilan kirsa va referal bo'lsa
     if (action === "/start") {
       referrerId = ctx.message?.text?.split(" ")[1];
-      
+
       // Referrer ID uzunligi 24dan oshsa, noto'g'ri deb hisoblaymiz
       if ((referrerId ?? "").length > 24) {
         referrerId = null;
@@ -93,8 +93,8 @@ export let subcribeFunk = async (ctx: any, next: any) => {
     // Tekshiriladigan kanallar ro'yxati
     const channels = [
       {
-        name: "Quiz Market",
-        link: "quiz_market",
+        name: "Tatu1k ",
+        link: "@JaysonsClub",
       },
     ];
 
@@ -104,7 +104,10 @@ export let subcribeFunk = async (ctx: any, next: any) => {
     for (let channel of channels) {
       const username = `@${channel.link}`;
       try {
-        const { status } = await ctx.telegram.getChatMember(username, ctx.from.id);
+        const { status } = await ctx.telegram.getChatMember(
+          username,
+          ctx.from.id
+        );
         if (!allowedStatuses.includes(status)) {
           remainingChannels.push(channel);
         }
@@ -125,7 +128,7 @@ export let subcribeFunk = async (ctx: any, next: any) => {
 
     const joinPrompt =
       "❗️ Botdan to'liq foydalanish imkoniga quyidagi kanallarga a'zo bo'lish orqali erishishingiz mumkin!";
-    const keyboard:any = remainingChannels.map((channel) => [
+    const keyboard: any = remainingChannels.map((channel) => [
       {
         text: `A'zo bo'lish: ${channel.name}`,
         url: `https://t.me/${channel.link}`,

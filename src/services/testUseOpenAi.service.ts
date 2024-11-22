@@ -92,7 +92,7 @@ export let createTestLanguage = async (
 
     max_tokens:
       pagesCount < 10
-        ? 500
+        ? 2500
         : pagesCount < 20
         ? 3500
         : pagesCount < 30
