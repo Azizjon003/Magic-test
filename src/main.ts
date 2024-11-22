@@ -255,10 +255,26 @@ process.on("unhandledRejection", (reason, promise) => {
   console.log("Ushlanmagan rad etilgan va'da:", promise, "Sabab:", new Date());
 });
 
-bot.use((ctx: any, next: any) => {
+bot.use(async (ctx: any, next: any) => {
   if (ctx.message && ctx.message.text) {
     const text = ctx.message.text;
     if (text === "📝 Test yaratish") {
+      const user = await prisma.user.findFirst({
+        where: {
+          telegram_id: String(ctx.from.id),
+        },
+      });
+
+      if (!user) {
+        return ctx.reply("Foydalanuvchi topilmadi");
+      }
+
+      if (user.balance < 2000) {
+        return ctx.reply(
+          "Balansingizda yetarli mablag' mavjud emas.Test yaratish uchun balansingizni to'ldiring "
+        );
+      }
+
       return ctx.scene.enter("testCreation");
     } else if (text === "💰 Balans") {
       return ctx.scene.enter("balance");

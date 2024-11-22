@@ -15,7 +15,11 @@ import {
 const testCreationScene = new Scenes.BaseScene("testCreation");
 
 testCreationScene.enter(async (ctx) => {
-  await ctx.reply("Test mavzusini kiriting:");
+  await ctx.reply("Test mavzusini kiriting:", {
+    reply_markup: {
+      remove_keyboard: true,
+    },
+  });
 });
 
 testCreationScene.hears("/start", async (ctx: any) => {
