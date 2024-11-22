@@ -237,7 +237,7 @@ bot.catch(async (err: any, ctx) => {
   if (userId) {
     await bot.telegram.sendMessage(
       userId,
-      "Xatolik yuz berdi. Iltimos qayta urinib ko'ring\n /start buyrug'ini bosib qayta urunib ko'ring"
+      "Xatolik yuz berdi. Iltimos qayta urinib ko'ring\n 5 daqiqadan so'ng /start buyrug'ini bosib qayta urunib ko'ring"
     );
   }
 

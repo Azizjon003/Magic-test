@@ -94,7 +94,7 @@ export let subcribeFunk = async (ctx: any, next: any) => {
     const channels = [
       {
         name: "Tatu1k ",
-        link: "@JaysonsClub",
+        link: "JaysonsClub",
       },
     ];
 
