@@ -1,7 +1,7 @@
 import { Markup } from "telegraf";
 
 export const mainKeyboard = Markup.keyboard([
-  ["📝 Test yaratish"],
+  ["📝 Test yaratish","Qo'llanma"],
   ["💰 Balans", "Foydali botlar"],
 ]).resize();
 export const confirmKeyboard = Markup.inlineKeyboard([

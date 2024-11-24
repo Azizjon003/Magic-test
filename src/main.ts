@@ -255,6 +255,65 @@ process.on("unhandledRejection", (reason, promise) => {
   console.log("Ushlanmagan rad etilgan va'da:", promise, "Sabab:", new Date());
 });
 
+bot.hears("Qo'llanma", async (ctx: any) => {
+  const text = `📖Botdan foydalanish qo'llanmasi:
+
+Test yaratishga oid (video - /vid):
+📌 Mavzu - Test mavzusi.
+👤 Test tili - Testda  testning tilini tanlang.
+🧮 Testlar soni - Testlar nechta  bo'lishi kerakligini tanlang.
+🇺🇿 Til - Taqdimot qaysi tilda bo'lishi.
+
+📝 Test yaratish - tugmasi bosilgandan keyin, quyidagi bosqichlardan ketma-ket o'tilib test yaratiladi:
+1.Test mavzusi kiritiladi
+2.Til tanlanadi
+3.Savollar soni tanlanadi
+
+Mustaqil ish
+1. Ko'rsatilgan tartibda so'ralgan ma'lumotlarni kiriting.
+
+
+/referal - do'stlarni taklif qilish orqali, balansingizni to'ldiring.
+/vid - taqdimot qilish uchun video qo'llanma.
+
+
+⁉️Qo'shimcha:
+Har bir referal a'zo uchun sizning balangizga 1000 so'm qo'shiladi
+
+
+🆕Bot yangilanishlari - @JaysonsClub`;
+
+  ctx.reply(text);
+});
+bot.command("vid", async (ctx) => {
+  const text = `📖Botdan foydalanish bo'yicha video qo'llanma`;
+  await ctx.replyWithVideo("https://t.me/mobi_center_baza/29", {
+    caption: text,
+  });
+});
+bot.command("referal", async (ctx: any) => {
+  console.log("Referal action triggered");
+  await ctx.deleteMessage();
+  const botUsername = ctx.botInfo.username; // Bot username ni ctx.botInfo dan olish
+  const referralLink = `https://t.me/${botUsername}?start=${ctx.from.id}`;
+  const message = `Do'stlaringizni taklif qiling va bonus oling! 🎉\n\nSizning referal havolangiz: [Referal Link](${referralLink})`;
+  const shareLink = `https://telegram.me/share/url?url=${referralLink}`;
+  const inlineKeyboard = {
+    inline_keyboard: [
+      [
+        {
+          text: "👥 Do'stlarni taklif qilish",
+          url: shareLink,
+        },
+      ],
+    ],
+  };
+
+  await ctx.replyWithMarkdown(message, {
+    reply_markup: inlineKeyboard,
+    disable_web_page_preview: true,
+  });
+});
 bot.use(async (ctx: any, next: any) => {
   if (ctx.message && ctx.message.text) {
     const text = ctx.message.text;
@@ -285,28 +344,4 @@ bot.use(async (ctx: any, next: any) => {
     }
   }
   return next();
-});
-
-bot.command("referal", async (ctx: any) => {
-  console.log("Referal action triggered");
-  await ctx.deleteMessage();
-  const botUsername = ctx.botInfo.username; // Bot username ni ctx.botInfo dan olish
-  const referralLink = `https://t.me/${botUsername}?start=${ctx.from.id}`;
-  const message = `Do'stlaringizni taklif qiling va bonus oling! 🎉\n\nSizning referal havolangiz: [Referal Link](${referralLink})`;
-  const shareLink = `https://telegram.me/share/url?url=${referralLink}`;
-  const inlineKeyboard = {
-    inline_keyboard: [
-      [
-        {
-          text: "👥 Do'stlarni taklif qilish",
-          url: shareLink,
-        },
-      ],
-    ],
-  };
-
-  await ctx.replyWithMarkdown(message, {
-    reply_markup: inlineKeyboard,
-    disable_web_page_preview: true,
-  });
 });
