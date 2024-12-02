@@ -1,7 +1,7 @@
 import { Markup } from "telegraf";
 
 export const mainKeyboard = Markup.keyboard([
-  ["📝 Test yaratish","Qo'llanma"],
+  ["📝 Test yaratish", "Qo'llanma"],
   ["💰 Balans", "Foydali botlar"],
 ]).resize();
 export const confirmKeyboard = Markup.inlineKeyboard([
@@ -62,7 +62,7 @@ export const balanceKeyboard = Markup.inlineKeyboard([
 export const paymentKeyboard = Markup.inlineKeyboard([
   [
     Markup.button.callback("💳 PAYME", "payme"),
-    // Markup.button.callback("💳 Karta orqali to'lov", "card"),
+    Markup.button.callback("💳 Karta orqali to'lov", "card"),
   ],
 ]);
 
@@ -84,12 +84,12 @@ export const paymentOptionsKeyboard = Markup.inlineKeyboard([
 ]);
 
 export const cardPaymentOptionsKeyboard = Markup.inlineKeyboard([
-  [Markup.button.callback("Checkni yuborish", "send_check")],
+  // [Markup.button.callback("Checkni yuborish", "send_check")],
   [Markup.button.callback("Ortga", "back")],
 ]);
 
 export const adminKeyboard = Markup.keyboard([
   ["✉️ Xabar yuborish", "💰 Balans to'ldirish"],
   ["📊 Bugungi statistika", "📈 Umumiy statistika"],
-  ["📅 Bu oygi statistika"]
+  ["📅 Bu oygi statistika"],
 ]).resize();

@@ -48,12 +48,12 @@ balanceScene.action("payme", async (ctx) => {
 balanceScene.action("card", async (ctx: any) => {
   await ctx.deleteMessage();
   const paymentInfo = `
-❗ Eng kamida 2000 so'm to'lov qiling, 2000 dan kam summalar bilan muammo bo'lishi mumkin.
+❗ Eng kamida 2000 so'm to'lov qiling,
 
 💳 5614 6868 0954 7279
 👤 Aliqulov Azizjon
 
-Ushbu karta raqamiga to'lov qiling va quyidagi tugmani bosing yoki /chek ni yuboring!
+Ushbu karta raqamiga to'lov qiling va @aliqulov_a03 chekni quyidagi adminimizga yuboring!
   `;
   await ctx.reply(paymentInfo, cardPaymentOptionsKeyboard);
 });
