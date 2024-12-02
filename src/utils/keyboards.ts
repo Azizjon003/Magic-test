@@ -87,3 +87,9 @@ export const cardPaymentOptionsKeyboard = Markup.inlineKeyboard([
   [Markup.button.callback("Checkni yuborish", "send_check")],
   [Markup.button.callback("Ortga", "back")],
 ]);
+
+export const adminKeyboard = Markup.keyboard([
+  ["✉️ Xabar yuborish", "💰 Balans to'ldirish"],
+  ["📊 Bugungi statistika", "📈 Umumiy statistika"],
+  ["📅 Bu oygi statistika"]
+]).resize();

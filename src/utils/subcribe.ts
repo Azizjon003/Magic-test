@@ -99,23 +99,23 @@ export let subcribeFunk = async (ctx: any, next: any) => {
     ];
 
     const allowedStatuses = ["creator", "administrator", "member"];
-    const remainingChannels = [];
+    const remainingChannels: any[] = [];
 
-    for (let channel of channels) {
-      const username = `@${channel.link}`;
-      try {
-        const { status } = await ctx.telegram.getChatMember(
-          username,
-          ctx.from.id
-        );
-        if (!allowedStatuses.includes(status)) {
-          remainingChannels.push(channel);
-        }
-      } catch (error) {
-        console.error(`Error checking channel membership: ${username}`, error);
-        remainingChannels.push(channel);
-      }
-    }
+    // for (let channel of channels) {
+    //   const username = `@${channel.link}`;
+    //   try {
+    //     const { status } = await ctx.telegram.getChatMember(
+    //       username,
+    //       ctx.from.id
+    //     );
+    //     if (!allowedStatuses.includes(status)) {
+    //       remainingChannels.push(channel);
+    //     }
+    //   } catch (error) {
+    //     console.error(`Error checking channel membership: ${username}`, error);
+    //     remainingChannels.push(channel);
+    //   }
+    // }
 
     if (!remainingChannels.length) {
       if (callbackData.includes("checkSubscribing")) {

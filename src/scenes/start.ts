@@ -1,6 +1,6 @@
 import { Scenes } from "telegraf";
 import enabled from "../utils/enabled";
-import { mainKeyboard } from "../utils/keyboards";
+import { mainKeyboard, adminKeyboard } from "../utils/keyboards";
 const scene = new Scenes.BaseScene("start");
 
 scene.enter(async (ctx: any) => {
@@ -23,8 +23,7 @@ scene.enter(async (ctx: any) => {
     return await ctx.scene.enter("control");
   } else if (enable === "two") {
     const text = "Assalomu alaykum Admin xush kelibsiz";
-
-    ctx.telegram.sendMessage(user_id, text, mainKeyboard);
+    ctx.telegram.sendMessage(user_id, text, adminKeyboard);
     return await ctx.scene.enter("admin");
   } else if (enable === "three") {
     ctx.telegram.sendMessage(
